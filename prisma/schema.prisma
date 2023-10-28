@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AccountType {
+  ADMIN
+  COMPANY
+  CANDIDATE
+}
+
+model Users {
+  //
+  id String @id @default(uuid())
+
+  email    String @unique
+  password String
+
+  accounts AccountUsers[]
+
+  createdAt String
+  updatedAt String
+}
+
+model AccountUsers {
+  //
+  id String @id @default(uuid())
+
+  user   Users  @relation(fields: [userId], references: [id])
+  userId String @unique
+
+  account   Account @relation(fields: [accountId], references: [id])
+  accountId String
+
+  createdAt String
+  updatedAt String
+
+  @@unique([userId, accountId])
+}
+
+model Account {
+  //
+  id String @id @default(uuid())
+
+  profileId String @unique
+
+  users       AccountUsers[]
+  accountType AccountType
+
+  createdAt String
+  updatedAt String
+}
+
+model CompanyProfile {
+  //
+  id String @id @default(uuid())
+
+  createdAt String
+  updatedAt String
+}
+
+model CandidateProfile {
+  //
+  id String @id @default(uuid())
+
+  createdAt String
+  updatedAt String
+}
