@@ -6,7 +6,7 @@ import authSchemas from '../schemas/authentication.js';
 
 const authRouter = Router();
 
-authRouter.post('/signup', schemaHandler(authSchemas.signup), authController.signup);
-authRouter.post('/signin', schemaHandler(authSchemas.signin), authController.signin);
+authRouter.post('/auth/signup', schemaHandler(authSchemas.signup), authController.signup);
+authRouter.post('/auth/signin', schemaHandler(authSchemas.signin), authController.signin);
 
 export default authRouter;

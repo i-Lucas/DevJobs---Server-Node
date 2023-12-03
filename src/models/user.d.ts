@@ -8,6 +8,7 @@ export interface User {
 }
 
 export interface UserJwtPayload {
+
     id: string,
     email: string
 }

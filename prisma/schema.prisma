@@ -67,6 +67,130 @@ model CandidateProfile {
   //
   id String @id @default(uuid())
 
+  // about
+  name       String
+  age        String
+  occupation String
+  resume     String
+
+  // contact
+  address  String
+  phone    String
+  github   String
+  linkedin String
+  email    String
+
+  CandidateProfileAcademicEducationModel CandidateProfileAcademicEducationModel[]
+  CandidateProfileJobExperiencesModel    CandidateProfileJobExperiencesModel[]
+  CandidateProfileCertificatesModel      CandidateProfileCertificatesModel[]
+  CandidateProfileProjectsModel          CandidateProfileProjectsModel[]
+  CandidateProfileLanguagesModel         CandidateProfileLanguagesModel[]
+  CandidateProfileStackListModel         CandidateProfileStackListModel[]
+
+  createdAt String
+  updatedAt String
+}
+
+model CandidateProfileAcademicEducationModel {
+  // 
+
+  id String @id @default(uuid())
+
+  profileId String
+  profile   CandidateProfile @relation(fields: [profileId], references: [id])
+
+  institution String
+  course      String
+  type        String
+  status      String
+  modality    String
+
+  from String
+  to   String
+
+  createdAt String
+  updatedAt String
+}
+
+model CandidateProfileJobExperiencesModel {
+  // 
+
+  id String @id @default(uuid())
+
+  profileId String
+  profile   CandidateProfile @relation(fields: [profileId], references: [id])
+
+  company     String
+  occupation  String
+  resume      String
+  current_job Boolean
+
+  from String
+  to   String
+
+  createdAt String
+  updatedAt String
+}
+
+model CandidateProfileCertificatesModel {
+  // 
+
+  id String @id @default(uuid())
+
+  profileId String
+  profile   CandidateProfile @relation(fields: [profileId], references: [id])
+
+  institution String
+  course      String
+  workload    String
+  link        String
+
+  createdAt String
+  updatedAt String
+}
+
+model CandidateProfileProjectsModel {
+  // 
+
+  id String @id @default(uuid())
+
+  profileId String
+  profile   CandidateProfile @relation(fields: [profileId], references: [id])
+
+  title  String
+  resume String
+  link   String
+
+  createdAt String
+  updatedAt String
+}
+
+model CandidateProfileLanguagesModel {
+  // 
+
+  id String @id @default(uuid())
+
+  profileId String
+  profile   CandidateProfile @relation(fields: [profileId], references: [id])
+
+  language String
+  level    String
+
+  createdAt String
+  updatedAt String
+}
+
+model CandidateProfileStackListModel {
+  // 
+
+  id String @id @default(uuid())
+
+  profileId String
+  profile   CandidateProfile @relation(fields: [profileId], references: [id])
+
+  name     String
+  workload String
+
   createdAt String
   updatedAt String
 }

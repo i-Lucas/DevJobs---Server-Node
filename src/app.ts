@@ -8,7 +8,6 @@ import { appMessageErros } from "./errors/index.js";
 import errorHandler from "./middlewares/error.js";
 import appRouter from "./routes/index.js";
 
-
 const app = express();
 
 app.set("trust proxy", true);

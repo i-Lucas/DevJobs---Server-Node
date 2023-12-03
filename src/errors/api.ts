@@ -1,4 +1,5 @@
 export interface ApiMessageErros {
+    
     manyRequests: string;
 }
 

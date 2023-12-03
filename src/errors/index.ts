@@ -5,11 +5,13 @@ import { AuthMessageErrors, authMessageErrors } from './user.js';
 import { AccountMessageErrors, AccountUserMessageErrors, accountMessageErrors, accountUserMessageErrors } from './account.js';
 
 interface ApiError {
+
     status: number;
     message: string;
 }
 
 interface ThrowResponseObject {
+
     NotFound: (message: string) => ApiError;
     BadRequest: (message: string) => ApiError;
     Conflict: (message: string) => ApiError;
@@ -19,15 +21,17 @@ interface ThrowResponseObject {
 }
 
 export const apiErrors: ThrowResponseObject = {
-	NotFound: (message: string) => { throw { status: 404, message }; },
-	Conflict: (message: string) => { throw { status: 409, message }; },
-	BadRequest: (message: string) => { throw { status: 400, message }; },
-	Unauthorized: (message: string) => { throw { status: 401, message }; },
-	UnprocessableEntity: (message: string) => { throw { status: 422, message }; },
-	InternalServerError: (message: string) => { throw { status: 500, message }; }
+
+    NotFound: (message: string) => { throw { status: 404, message }; },
+    Conflict: (message: string) => { throw { status: 409, message }; },
+    BadRequest: (message: string) => { throw { status: 400, message }; },
+    Unauthorized: (message: string) => { throw { status: 401, message }; },
+    UnprocessableEntity: (message: string) => { throw { status: 422, message }; },
+    InternalServerError: (message: string) => { throw { status: 500, message }; }
 };
 
 interface AppMessageErrors {
+
     auth: AuthMessageErrors,
     api: ApiMessageErros,
     account: AccountMessageErrors,
@@ -35,8 +39,9 @@ interface AppMessageErrors {
 }
 
 export const appMessageErros: AppMessageErrors = {
-	auth: { ...authMessageErrors },
-	api: { ...apiErrorsMessage },
-	account: { ...accountMessageErrors },
-	accountUser: { ...accountUserMessageErrors }
+
+    auth: { ...authMessageErrors },
+    api: { ...apiErrorsMessage },
+    account: { ...accountMessageErrors },
+    accountUser: { ...accountUserMessageErrors }
 };

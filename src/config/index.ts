@@ -5,13 +5,15 @@ import { ApiConfig } from '../models/api.js';
 import { UserAuthConfig } from '../models/auth.js';
 
 interface AppConfig {
+
     api: ApiConfig,
     auth: UserAuthConfig
 }
 
 const config: AppConfig = {
-	api: apiConfig,
-	auth: authConfig
+
+    api: apiConfig,
+    auth: authConfig
 };
 
 export default config;

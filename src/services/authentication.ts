@@ -1,5 +1,4 @@
 import bcrypt from 'bcrypt';
-import CryptoJS from 'crypto-js';
 import jwt from 'jsonwebtoken';
 
 import config from '../config/index.js';
@@ -31,9 +30,10 @@ async function signin({ email, password }: SigninUser) {
 		email: user.email
 	};
 
-	const token = jwt.sign(payload, config.api.env.JWT_SECRET, { expiresIn: config.auth.token.expiration });
-	return CryptoJS.AES.encrypt(token, config.api.env.KEY_SECRET).toString();
-}
+	return jwt.sign(payload, config.api.env.JWT_SECRET, {
+		expiresIn: config.auth.token.expiration
+	})
+};
 
 export const authService = {
 	signin,

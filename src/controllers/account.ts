@@ -1,59 +1,79 @@
 import { Request, Response } from 'express';
 
-import { UserJwtPayload } from '../models/user.js';
+// import { UserJwtPayload } from '../models/user.js';
 
 import accountService from '../services/account.js';
 
-async function getAccount(req: Request, res: Response) {
+// async function getAccount(req: Request, res: Response) {
 
-	const { id: userId }: UserJwtPayload = res.locals.user;
-	const response = await accountService.getUserAccount(userId);
+// 	const { id: userId }: UserJwtPayload = res.locals.user;
+// 	const response = await accountService.getUserAccount(userId);
 
+// 	return res.status(response.status).json(response);
+// }
+
+// async function getAccountProfile(req: Request, res: Response) {
+
+// 	const { id: userId }: UserJwtPayload = res.locals.user;
+// 	const response = await accountService.getAccountProfile(userId);
+
+// 	return res.status(response.status).json(response);
+// }
+
+async function checkEmailAvailability(req: Request, res: Response) {
+
+	const { email } = req.params;
+
+	const response = await accountService.checkEmailAvailability(email);
 	return res.status(response.status).json(response);
 }
 
-async function getAccountProfile(req: Request, res: Response) {
+async function createDeveloperAccount(req: Request, res: Response) {
 
-	const { id: userId }: UserJwtPayload = res.locals.user;
-	const response = await accountService.getAccountProfile(userId);
+	const { profile, account } = req.body;
 
+	const response = await accountService.createDevAccount({ profile, account });
 	return res.status(response.status).json(response);
 }
 
-async function createNewAccount(req: Request, res: Response) {
+// async function createNewAccount(req: Request, res: Response) {
 
-	const { id: userId }: UserJwtPayload = res.locals.user;
+// 	const { id: userId }: UserJwtPayload = res.locals.user;
 
-	const { data, type } = req.body;
+// 	const { data, type } = req.body;
 
-	if (!data || !type) {
+// 	console.log(data, type)
 
-		return res.status(422).json({
-			status: 422,
-			message: 'Tipo da conta ou dados inválidos'
-		});
-	}
+// 	if (!data || !type) {
 
-	const response = await accountService.createNewAccount({
-		data, type, userId
-	});
+// 		return res.status(422).json({
+// 			status: 422,
+// 			message: 'Tipo da conta ou dados inválidos'
+// 		});
+// 	}
 
-	return res.status(response.status).json(response);
-}
+// 	const response = await accountService.createNewAccount({
+// 		data, type, userId
+// 	});
 
-async function getAccountAndAccountProfile(req: Request, res: Response) {
+// 	return res.status(response.status).json(response);
+// }
 
-	const { id: userId }: UserJwtPayload = res.locals.user;
-	const response = await accountService.getAccountAndAccountProfile(userId);
+// async function getAccountAndAccountProfile(req: Request, res: Response) {
 
-	return res.status(response.status).json(response);
-}
+// 	const { id: userId }: UserJwtPayload = res.locals.user;
+// 	const response = await accountService.getAccountAndAccountProfile(userId);
+
+// 	return res.status(response.status).json(response);
+// }
 
 const accountController = {
-	getAccountAndAccountProfile,
-	getAccountProfile,
-	createNewAccount,
-	getAccount
+	checkEmailAvailability,
+	createDeveloperAccount,
+	// getAccountAndAccountProfile,
+	// getAccountProfile,
+	// createNewAccount,
+	// getAccount
 };
 
 export default accountController;

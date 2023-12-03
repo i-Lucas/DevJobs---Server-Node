@@ -9,10 +9,13 @@ export default function schemaHandler<T>(schema: Schema<T>) {
 
         const { error } = schema.validate(req.body);
 
-        if (error) return res.status(422).send({
-            status: 422,
-            message: error.details[0].message
-        });
+        if (error) {
+
+            return res.status(422).send({
+                status: 422,
+                message: error.details[0].message
+            })
+        };
 
         next();
     };

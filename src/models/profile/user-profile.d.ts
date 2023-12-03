@@ -17,7 +17,7 @@
 // interface UserProfileHeader {
 
 //     id: UUID,
-//     profileId: UUID,
+//     profileId: UUID, // remover essa porra
 
 //     profile_name: string;
 //     profile_job_title: string;
@@ -70,7 +70,7 @@
 //     id: UUID,
 //     profileId: UUID,
 
-//     name: string;
+//     title: string;
 //     resume: string;
 //     link?: string;
 // }
