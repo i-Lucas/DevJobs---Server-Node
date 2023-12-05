@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-// import { UserJwtPayload } from '../models/user.js';
+import { UserJwtPayload } from '../models/user.js';
 
 import accountService from '../services/account.js';
 
@@ -59,18 +59,21 @@ async function createDeveloperAccount(req: Request, res: Response) {
 // 	return res.status(response.status).json(response);
 // }
 
-// async function getAccountAndAccountProfile(req: Request, res: Response) {
+async function getAccountAndAccountProfile(req: Request, res: Response) {
 
-// 	const { id: userId }: UserJwtPayload = res.locals.user;
-// 	const response = await accountService.getAccountAndAccountProfile(userId);
+	const { id: userId }: UserJwtPayload = res.locals.user;	
 
-// 	return res.status(response.status).json(response);
-// }
+	await new Promise((resolve) => setTimeout(resolve, 5000));
+
+	const response = await accountService.getAccountAndAccountProfile(userId);
+
+	return res.status(response.status).json(response);
+}
 
 const accountController = {
 	checkEmailAvailability,
 	createDeveloperAccount,
-	// getAccountAndAccountProfile,
+	getAccountAndAccountProfile,
 	// getAccountProfile,
 	// createNewAccount,
 	// getAccount

@@ -62,14 +62,14 @@ async function createNewCandidateProfile(profile: CreateNewCandidateProfileData)
 			updatedAt: now(),
 		},
 
-		include: {
-			CandidateProfileAcademicEducationModel: true,
-			CandidateProfileJobExperiencesModel: true,
-			CandidateProfileCertificatesModel: true,
-			CandidateProfileLanguagesModel: true,
-			CandidateProfileProjectsModel: true,
-			CandidateProfileStackListModel: true,
-		},
+		// include: {
+		// 	CandidateProfileAcademicEducationModel: true,
+		// 	CandidateProfileJobExperiencesModel: true,
+		// 	CandidateProfileCertificatesModel: true,
+		// 	CandidateProfileLanguagesModel: true,
+		// 	CandidateProfileProjectsModel: true,
+		// 	CandidateProfileStackListModel: true,
+		// },
 	});
 
 }
@@ -85,29 +85,67 @@ async function createNewCandidateProfile(profile: CreateNewCandidateProfileData)
 // 	});
 // }
 
-// async function getCompanyProfile(profileId: string): Promise<CompanyProfile> {
+async function getCompanyProfile(profileId: string) {
 
-// 	return await db.companyProfile.findUnique({
-// 		where: {
-// 			id: profileId
-// 		}
-// 	});
-// }
+	return await db.companyProfile.findUnique({
+		where: {
+			id: profileId
+		},
+	});
+}
 
-// async function getCandidateProfile(profileId: string) {
+async function getCandidateProfile(profileId: string) {
 
-// 	return await db.candidateProfile.findUnique({
-// 		where: {
-// 			id: profileId
-// 		}
-// 	});
-// }
+	const profile = await db.candidateProfile.findUnique({
+
+		where: {
+			id: profileId
+		},
+
+		include: {
+			CandidateProfileAcademicEducationModel: true,
+			CandidateProfileJobExperiencesModel: true,
+			CandidateProfileCertificatesModel: true,
+			CandidateProfileLanguagesModel: true,
+			CandidateProfileProjectsModel: true,
+			CandidateProfileStackListModel: true,
+		},
+	});
+
+	return {
+
+		about: {
+			age: profile.age,
+			name: profile.name,
+			occupation: profile.occupation,
+			resume: profile.resume
+		},
+		contact: {
+			address: profile.address,
+			email: profile.email,
+			github: profile.github,
+			linkedin: profile.linkedin,
+			phone: profile.phone
+		},
+
+		id: profile.id,
+		createdAt: profile.createdAt,
+		updatedAt: profile.updatedAt,
+		stack: profile.CandidateProfileStackListModel,
+		projects: profile.CandidateProfileProjectsModel,
+		languages: profile.CandidateProfileLanguagesModel,
+		certificates: profile.CandidateProfileCertificatesModel,
+		academic_education: profile.CandidateProfileAcademicEducationModel,
+		professional_experiences: profile.CandidateProfileJobExperiencesModel,
+	}
+
+}
 
 const profileRepository = {
 	createNewCandidateProfile,
 	// createNewCompanyProfile,
-	// getCandidateProfile,
-	// getCompanyProfile,
+	getCandidateProfile,
+	getCompanyProfile,
 };
 
 export default profileRepository;
