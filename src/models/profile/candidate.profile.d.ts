@@ -1,56 +1,76 @@
-export interface CandidateProfile {
+export interface DeveloperProfile {
 
     id: string;
 
-    about: CandidateProfileAbout;
-    contact: CandidateProfileContact;
-    
-    academic_education: CandidateProfileAcademicEducation[];
-    professional_experiences: CandidateProfileJobExperiences[];
-    certificates: CandidateProfileCertificates[];
-    languages: CandidateProfileLanguages[];
-    projects: CandidateProfileProjects[];
-    stack: CandidateProfileStackList[];
+    address: DeveloperProfileAddress;
+    about: DeveloperProfileAbout;
+    contact: DeveloperProfileContact;
+
+    stack: DeveloperProfileStackList[];
+    projects: DeveloperProfileProjects[];
+    languages: DeveloperProfileLanguages[];
+    certificates: DeveloperProfileCertificates[];
+    academic_education: DeveloperProfileAcademicEducation[];
+    professional_experiences: DeveloperProfileJobExperiences[];
 
     createdAt: string;
     updatedAt: string;
 }
 
-export interface CandidateProfileAbout {
+export interface DeveloperProfileAddress {
 
-    name: string;
-    age: string;
-    occupation: string;
-    resume: string;
+    cep: string;
+    city: string;
+    state: string;
+    number: string;
+    address: string;
+    complement: string;
+    neighborhood: string;
+
+    createdAt: string;
+    updatedAt: string;
 }
 
-export interface CandidateProfileContact {
+export interface DeveloperProfileAbout {
 
-    address: string;
+    age: string;
+    name: string;
+    resume: string;
+    occupation: string;
+
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface DeveloperProfileContact {
+
     phone: string;
+    email: string;
     github: string;
     linkedin: string;
-    email: string;
-}
-
-export interface CandidateProfileAcademicEducation {
-
-    id: string;
-
-    course: string;
-    institution: string;
-    modality: string;
-    status: string;
-    type: string;
-
-    from: string;
-    to: string;
 
     createdAt: string;
     updatedAt: string;
 }
 
-export interface CandidateProfileJobExperiences {
+export interface DeveloperProfileAcademicEducation {
+
+    id: string;
+
+    type: string;
+    course: string;
+    status: string;
+    modality: string;
+    institution: string;
+
+    to: string;
+    from: string;
+
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface DeveloperProfileJobExperiences {
 
     id: string;
 
@@ -59,50 +79,50 @@ export interface CandidateProfileJobExperiences {
     occupation: string;
     resume: string;
 
-    from: string;
     to: string;
+    from: string;
 
     createdAt: string;
     updatedAt: string;
 }
 
-export interface CandidateProfileCertificates {
+export interface DeveloperProfileCertificates {
 
     id: string;
 
+    link: string;
     course: string;
-    institution: string;
     workload: string;
-    link: string;
+    institution: string;
 
     createdAt: string;
     updatedAt: string;
 }
 
-export interface CandidateProfileProjects {
+export interface DeveloperProfileProjects {
 
     id: string;
 
-    resume: string;
+    link: string;
     title: string;
-    link: string;
+    resume: string;
 
     createdAt: string;
     updatedAt: string;
 }
 
-export interface CandidateProfileLanguages {
+export interface DeveloperProfileLanguages {
 
     id: string;
 
-    language: string;
     level: string;
+    language: string;
 
     createdAt: string;
     updatedAt: string;
 }
 
-export interface CandidateProfileStackList {
+export interface DeveloperProfileStackList {
 
     id: string;
 
@@ -113,4 +133,19 @@ export interface CandidateProfileStackList {
     updatedAt: string;
 }
 
-export type CreateNewCandidateProfileData = Omit<CandidateProfile, 'id' | 'updatedAt' | 'createdAt'>;
+export type CreateNewDeveloperProfileData = Omit<DeveloperProfile, 'id' | 'updatedAt' | 'createdAt'>;
+
+export interface CreateDeveloperAccountRequest {
+    
+    stack: Omit<DeveloperProfileStackList, 'id'>;
+    projects: Omit<DeveloperProfileProjects, 'id'>;
+    languages: Omit<DeveloperProfileLanguages, 'id'>;
+    certificates: Omit<DeveloperProfileCertificates, 'id'>;
+    academic_education: Omit<DeveloperProfileAcademicEducation, 'id'>;
+    professional_experiences: Omit<DeveloperProfileJobExperiences, 'id'>;
+
+    password: { password: string };
+    about: Omit<DeveloperProfileAbout, 'id' | 'updatedAt' | 'createdAt'>;
+    address: Omit<DeveloperProfileAddress, 'id' | 'updatedAt' | 'createdAt'>;
+    contact: Omit<DeveloperProfileContact, 'id' | 'updatedAt' | 'createdAt'>;
+}

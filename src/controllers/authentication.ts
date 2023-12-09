@@ -9,6 +9,8 @@ async function signin(req: Request, res: Response): Promise<ApiResponse<{ token:
 	const data: { email: string; password: string } = req.body;
 	const token = await authService.signin(data);
 
+	await new Promise((resolve) => setTimeout(resolve, 2500));
+
 	const response: ApiResponse<{ token: string }> = {
 		status: 200,
 		message: 'Login efetuado com sucesso!',
@@ -20,11 +22,13 @@ async function signin(req: Request, res: Response): Promise<ApiResponse<{ token:
 	res.send(response);
 	return response;
 }
-
+/*
 async function signup(req: Request, res: Response): Promise<ApiResponse<null>> {
 
 	const data: { email: string; password: string } = req.body;
 	await authService.signup(data);
+
+	await new Promise((resolve) => setTimeout(resolve, 2500));
 
 	const response: ApiResponse<null> = {
 		status: 201,
@@ -34,10 +38,11 @@ async function signup(req: Request, res: Response): Promise<ApiResponse<null>> {
 	res.send(response);
 	return response;
 }
+*/
 
 const authController = {
 	signin,
-	signup
+	// signup
 };
 
 export default authController;

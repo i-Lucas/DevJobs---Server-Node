@@ -2,15 +2,15 @@ import { Router } from 'express';
 
 import accountController from '../controllers/account.js';
 import { tokenHandler } from '../middlewares/token.js';
+import schemaHandler from '../middlewares/schema.js';
+import profileSchema from '../schemas/profile.js';
 
 const accountRouter = Router();
 
-accountRouter.get('/account/get-account-data', tokenHandler, accountController.getAccountAndAccountProfile);
-// accountRouter.get('/account/get-user-account', tokenHandler, accountController.getAccount);
-// accountRouter.get('/account/get-account-profile', tokenHandler, accountController.getAccountProfile);
-// accountRouter.post('/account/create-new-account', tokenHandler, accountController.createNewAccount);
+accountRouter.post('/account/create-dev-account', schemaHandler(profileSchema.developerSchema), accountController.createDeveloperAccount);
+accountRouter.post('/account/create-company-account', schemaHandler(profileSchema.companySchema), accountController.createCompanyAccount);
 
 accountRouter.get('/account/check-email-availability/:email', accountController.checkEmailAvailability);
-accountRouter.post('/account/create-dev-account', accountController.createDeveloperAccount);
+accountRouter.get('/account/get-account-data', tokenHandler, accountController.getAccountAndAccountProfile);
 
 export default accountRouter;

@@ -7,7 +7,7 @@ async function getAccountProfile(account: Account) {
 		return await profileRepository.getCandidateProfile(account.profileId);
 
 	} else if (account.accountType === 'COMPANY') {
-		return await profileRepository.getCandidateProfile(account.profileId);
+		return await profileRepository.getCompanyProfile(account.profileId);
 	}
 }
 const profileService = {

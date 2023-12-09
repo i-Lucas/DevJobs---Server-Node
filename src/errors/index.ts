@@ -2,7 +2,12 @@ import { ApiMessageErros, apiErrorsMessage } from './api.js';
 
 import { AuthMessageErrors, authMessageErrors } from './user.js';
 
-import { AccountMessageErrors, AccountUserMessageErrors, accountMessageErrors, accountUserMessageErrors } from './account.js';
+import {
+    AccountMessageErrors,
+    AccountUserMessageErrors,
+    accountMessageErrors,
+    accountUserMessageErrors
+} from './account.js';
 
 interface ApiError {
 

@@ -1,100 +1,88 @@
 import db from '../config/db.js';
 
-// import { CompanyProfile, CreateNewCompanyProfileData } from '../models/profile/company.profile.js';
-
-import { CreateNewCandidateProfileData } from '../models/profile/candidate.profile.js';
+import { CompanyProfile, CreateCompanyAccountRequest, NewCompanyProfile } from '../models/profile/company.profile.js';
+import { DeveloperProfile, CreateDeveloperAccountRequest } from '../models/profile/candidate.profile.js';
 
 const now = (): string => new Date().getTime().toString();
 
-async function createNewCandidateProfile(profile: CreateNewCandidateProfileData) {
+const createdAtAndUpdatedAtNow = () => {
+	return {
+		createdAt: now(),
+		updatedAt: now(),
+	}
+}
+
+async function createCandidateProfile(profile: CreateDeveloperAccountRequest) {
+
+	const createdAtAndUpdatedAt = createdAtAndUpdatedAtNow();
 
 	return await db.candidateProfile.create({
 
 		data: {
 
-			address: profile.contact.address,
-			email: profile.contact.email,
-			github: profile.contact.github,
-			linkedin: profile.contact.linkedin,
-			phone: profile.contact.phone,
-			name: profile.about.name,
-			occupation: profile.about.occupation,
-			resume: profile.about.resume,
-			age: profile.about.age,
+			...createdAtAndUpdatedAt,
+
+			CandidateProfileAboutModel: {
+				create: {
+					...profile.about,
+					...createdAtAndUpdatedAt,
+				},
+			},
+
+			CandidateProfileAddressModel: {
+				create: {
+					...profile.address,
+					...createdAtAndUpdatedAt,
+				}
+			},
+
+			CandidateProfileContactModel: {
+				create: {
+					...profile.contact,
+					...createdAtAndUpdatedAt,
+				}
+			},
 
 			CandidateProfileAcademicEducationModel: {
 				createMany: {
-					data: profile.academic_education,
-				},
+					data: profile.academic_education
+				}
+			},
+
+			CandidateProfileCertificatesModel: {
+				createMany: {
+					data: profile.certificates
+				}
 			},
 
 			CandidateProfileJobExperiencesModel: {
 				createMany: {
 					data: profile.professional_experiences,
-				},
-			},
-
-			CandidateProfileCertificatesModel: {
-				createMany: {
-					data: profile.certificates,
-				},
+				}
 			},
 
 			CandidateProfileLanguagesModel: {
 				createMany: {
-					data: profile.languages,
-				},
+					data: profile.languages
+				}
 			},
 
 			CandidateProfileProjectsModel: {
 				createMany: {
 					data: profile.projects,
-				},
+				}
 			},
 
 			CandidateProfileStackListModel: {
 				createMany: {
 					data: profile.stack,
-				},
+				}
 			},
-
-			createdAt: now(),
-			updatedAt: now(),
-		},
-
-		// include: {
-		// 	CandidateProfileAcademicEducationModel: true,
-		// 	CandidateProfileJobExperiencesModel: true,
-		// 	CandidateProfileCertificatesModel: true,
-		// 	CandidateProfileLanguagesModel: true,
-		// 	CandidateProfileProjectsModel: true,
-		// 	CandidateProfileStackListModel: true,
-		// },
-	});
-
-}
-
-// async function createNewCompanyProfile(data: CreateNewCompanyProfileData): Promise<CompanyProfile> {
-
-// 	return await db.companyProfile.create({
-// 		data: {
-// 			...data,
-// 			createdAt: now(),
-// 			updatedAt: now()
-// 		}
-// 	});
-// }
-
-async function getCompanyProfile(profileId: string) {
-
-	return await db.companyProfile.findUnique({
-		where: {
-			id: profileId
-		},
+		}
 	});
 }
 
-async function getCandidateProfile(profileId: string) {
+async function getCandidateProfile(profileId: string): Promise<DeveloperProfile> {
 
 	const profile = await db.candidateProfile.findUnique({
 
@@ -103,34 +91,26 @@ async function getCandidateProfile(profileId: string) {
 		},
 
 		include: {
-			CandidateProfileAcademicEducationModel: true,
-			CandidateProfileJobExperiencesModel: true,
-			CandidateProfileCertificatesModel: true,
-			CandidateProfileLanguagesModel: true,
+			CandidateProfileAboutModel: true,
+			CandidateProfileContactModel: true,
+			CandidateProfileAddressModel: true,
 			CandidateProfileProjectsModel: true,
 			CandidateProfileStackListModel: true,
+			CandidateProfileLanguagesModel: true,
+			CandidateProfileCertificatesModel: true,
+			CandidateProfileJobExperiencesModel: true,
+			CandidateProfileAcademicEducationModel: true,
 		},
 	});
 
 	return {
 
-		about: {
-			age: profile.age,
-			name: profile.name,
-			occupation: profile.occupation,
-			resume: profile.resume
-		},
-		contact: {
-			address: profile.address,
-			email: profile.email,
-			github: profile.github,
-			linkedin: profile.linkedin,
-			phone: profile.phone
-		},
-
 		id: profile.id,
 		createdAt: profile.createdAt,
 		updatedAt: profile.updatedAt,
+		about: profile.CandidateProfileAboutModel,
+		address: profile.CandidateProfileAddressModel,
+		contact: profile.CandidateProfileContactModel,
 		stack: profile.CandidateProfileStackListModel,
 		projects: profile.CandidateProfileProjectsModel,
 		languages: profile.CandidateProfileLanguagesModel,
@@ -138,14 +118,99 @@ async function getCandidateProfile(profileId: string) {
 		academic_education: profile.CandidateProfileAcademicEducationModel,
 		professional_experiences: profile.CandidateProfileJobExperiencesModel,
 	}
+}
+
+
+
+async function createCompanyProfile(profile: NewCompanyProfile) {
+
+	const createdAtAndUpdatedAt = createdAtAndUpdatedAtNow();
+
+	return await db.companyProfile.create({
+
+		data: {
+
+			...createdAtAndUpdatedAt,
+
+			CompanyProfileAddressModel: {
+				create: {
+					...profile.address,
+					...createdAtAndUpdatedAt,
+				}
+			},
+
+			CompanyProfileDetailsModel: {
+				create: {
+					...profile.details,
+					...createdAtAndUpdatedAt,
+				}
+			},
+
+			CompanyProfileOwnerInfoModel: {
+				create: {
+					userId: profile.userId,
+					email: profile.account.email,
+					name: profile.account.name,
+					phone: profile.account.phone,
+					...createdAtAndUpdatedAt,
+				}
+			},
+
+			CompanyProfileSocialNetworkModel: {
+				create: {
+					...profile.social,
+					...createdAtAndUpdatedAt,
+				}
+			},
+
+			CompanyProfileSupportInfoModel: {
+				create: {
+					...profile.suport,
+					...createdAtAndUpdatedAt,
+				}
+			}
+		}
+	})
+}
+
+async function getCompanyProfile(profileId: string): Promise<CompanyProfile> {
+
+	const profile = await db.companyProfile.findUnique({
+
+		where: {
+			id: profileId
+		},
+
+		include: {
+			CompanyProfileAddressModel: true,
+			CompanyProfileDetailsModel: true,
+			CompanyProfileOwnerInfoModel: true,
+			CompanyProfileSocialNetworkModel: true,
+			CompanyProfileSupportInfoModel: true
+		},
+	});
+
+	return {
+
+		id: profile.id,
+		createdAt: profile.createdAt,
+		updatedAt: profile.updatedAt,
+		address: profile.CompanyProfileAddressModel,
+		details: profile.CompanyProfileDetailsModel,
+		ownerInfo: profile.CompanyProfileOwnerInfoModel,
+		socialNetwork: profile.CompanyProfileSocialNetworkModel,
+		suportInfo: profile.CompanyProfileSupportInfoModel
+	}
 
 }
 
 const profileRepository = {
-	createNewCandidateProfile,
-	// createNewCompanyProfile,
-	getCandidateProfile,
+
+	createNewCompanyProfile: createCompanyProfile,
 	getCompanyProfile,
+
+	createNewCandidateProfile: createCandidateProfile,
+	getCandidateProfile,
 };
 
 export default profileRepository;

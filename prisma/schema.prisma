@@ -55,30 +55,117 @@ model Account {
   updatedAt String
 }
 
+// ------------------------------------------------------------------------------------------------------------- company
+
 model CompanyProfile {
   //
   id String @id @default(uuid())
+
+  CompanyProfileDetailsModel       CompanyProfileDetailsModel?
+  CompanyProfileAddressModel       CompanyProfileAddressModel?
+  CompanyProfileOwnerInfoModel     CompanyProfileOwnerInfoModel?
+  CompanyProfileSupportInfoModel   CompanyProfileSupportInfoModel?
+  CompanyProfileSocialNetworkModel CompanyProfileSocialNetworkModel?
 
   createdAt String
   updatedAt String
 }
 
-model CandidateProfile {
+model CompanyProfileAddressModel {
   //
   id String @id @default(uuid())
 
-  // about
-  name       String
-  age        String
-  occupation String
-  resume     String
+  profileId String         @unique
+  profile   CompanyProfile @relation(fields: [profileId], references: [id])
 
-  // contact
-  address  String
-  phone    String
-  github   String
-  linkedin String
-  email    String
+  cep          String
+  city         String
+  state        String
+  number       String
+  address      String
+  complement   String
+  neighborhood String
+
+  createdAt String
+  updatedAt String
+}
+
+model CompanyProfileOwnerInfoModel {
+  //
+  id String @id @default(uuid())
+
+  profileId String         @unique
+  profile   CompanyProfile @relation(fields: [profileId], references: [id])
+
+  userId String
+  name   String
+  phone  String
+  email  String
+
+  createdAt String
+  updatedAt String
+}
+
+model CompanyProfileDetailsModel {
+  //
+  id String @id @default(uuid())
+
+  profileId String         @unique
+  profile   CompanyProfile @relation(fields: [profileId], references: [id])
+
+  cnpj         String
+  about        String
+  teamSize     String
+  foundedIn    String
+  marketArea   String
+  description  String
+  legalNature  String
+  socialReason String
+  fantasy_name String
+
+  createdAt String
+  updatedAt String
+}
+
+model CompanyProfileSupportInfoModel {
+  //
+  id String @id @default(uuid())
+
+  profileId String         @unique
+  profile   CompanyProfile @relation(fields: [profileId], references: [id])
+
+  phone        String
+  rhEmail      String
+  whatsapp     String
+  supportEmail String
+
+  createdAt String
+  updatedAt String
+}
+
+model CompanyProfileSocialNetworkModel {
+  //
+  id String @id @default(uuid())
+
+  profileId String         @unique
+  profile   CompanyProfile @relation(fields: [profileId], references: [id])
+
+  github    String
+  website   String
+  twitter   String
+  facebook  String
+  instagram String
+  linkedin  String
+
+  createdAt String
+  updatedAt String
+}
+
+// ------------------------------------------------------------------------------------------------------------- candidate ( developer )
+
+model CandidateProfile {
+  //
+  id String @id @default(uuid())
 
   CandidateProfileAcademicEducationModel CandidateProfileAcademicEducationModel[]
   CandidateProfileJobExperiencesModel    CandidateProfileJobExperiencesModel[]
@@ -86,6 +173,64 @@ model CandidateProfile {
   CandidateProfileProjectsModel          CandidateProfileProjectsModel[]
   CandidateProfileLanguagesModel         CandidateProfileLanguagesModel[]
   CandidateProfileStackListModel         CandidateProfileStackListModel[]
+  //
+  CandidateProfileAboutModel             CandidateProfileAboutModel?
+  CandidateProfileAddressModel           CandidateProfileAddressModel?
+  CandidateProfileContactModel           CandidateProfileContactModel?
+
+  createdAt String
+  updatedAt String
+}
+
+model CandidateProfileContactModel {
+  //
+
+  id String @id @default(uuid())
+
+  profileId String           @unique
+  profile   CandidateProfile @relation(fields: [profileId], references: [id])
+
+  phone    String
+  github   String
+  linkedin String
+  email    String
+
+  createdAt String
+  updatedAt String
+}
+
+model CandidateProfileAboutModel {
+  //
+
+  id String @id @default(uuid())
+
+  profileId String           @unique
+  profile   CandidateProfile @relation(fields: [profileId], references: [id])
+
+  name       String
+  age        String
+  occupation String
+  resume     String
+
+  createdAt String
+  updatedAt String
+}
+
+model CandidateProfileAddressModel {
+  //
+
+  id String @id @default(uuid())
+
+  profileId String           @unique
+  profile   CandidateProfile @relation(fields: [profileId], references: [id])
+
+  cep          String
+  city         String
+  state        String
+  number       String
+  address      String
+  complement   String
+  neighborhood String
 
   createdAt String
   updatedAt String
@@ -194,3 +339,5 @@ model CandidateProfileStackListModel {
   createdAt String
   updatedAt String
 }
+
+// -------------------------------------------------------------------------------------------------------------------------------------
