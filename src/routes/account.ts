@@ -10,7 +10,7 @@ const accountRouter = Router();
 accountRouter.post('/account/create-dev-account', schemaHandler(profileSchema.developerSchema), accountController.createDeveloperAccount);
 accountRouter.post('/account/create-company-account', schemaHandler(profileSchema.companySchema), accountController.createCompanyAccount);
 
+accountRouter.get('/account/get-account-data', tokenHandler, accountController.getAccountData);
 accountRouter.get('/account/check-email-availability/:email', accountController.checkEmailAvailability);
-accountRouter.get('/account/get-account-data', tokenHandler, accountController.getAccountAndAccountProfile);
 
 export default accountRouter;

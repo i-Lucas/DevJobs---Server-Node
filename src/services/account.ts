@@ -1,19 +1,19 @@
 import bcrypt from 'bcrypt';
 
-import { Account } from '../models/account.js';
+import { GetAccountDataResponse } from '../models/account.js';
 import { ApiResponse } from '../models/api.js';
 
 import accountRepository from '../repositories/account.js';
 import profileRepository from '../repositories/profile.js';
 
 import { apiErrors, appMessageErros } from '../errors/index.js';
-import { AccountProfile } from '../models/profile/profile.js';
 
 import profileService from './profile.js';
 import userRepository from '../repositories/user.js';
 
-import { CreateCompanyAccountRequest, NewCompanyProfile } from '../models/profile/company.profile.js';
 import { CreateDeveloperAccountRequest } from '../models/profile/candidate.profile.js';
+import { CreateCompanyAccountRequest, NewCompanyProfile } from '../models/profile/company.profile.js';
+import userService from './user.js';
 
 async function getAccountUserOrThrow(userId: string) {
 
@@ -68,11 +68,13 @@ async function createCompanyAccount(profile: CreateCompanyAccountRequest) {
 	const password = await bcrypt.hash(profile.account.password, 10);
 
 	const { id: userId } = await userRepository.createNewUser({
-		email: profile.account.email, password
+		name: profile.account.name,
+		email: profile.account.email,
+		password
 	});
 
 	const newProfile: NewCompanyProfile = {
-		...profile, 
+		...profile,
 		userId
 	}
 
@@ -108,7 +110,9 @@ async function createDevAccount(profile: CreateDeveloperAccountRequest) {
 	const password = await bcrypt.hash(profile.password.password, 10);
 
 	const { id: userId } = await userRepository.createNewUser({
-		email: profile.contact.email, password
+		name: profile.about.name,
+		email: profile.contact.email,
+		password
 	});
 
 	await accountRepository.createAccountUser({ accountId, userId });
@@ -120,30 +124,35 @@ async function createDevAccount(profile: CreateDeveloperAccountRequest) {
 	return response;
 }
 
-async function getAccountAndAccountProfile(userId: string) {
+async function getAccountData(userId: string) {
 
 	const { accountId } = await getAccountUserOrThrow(userId);
 
 	const account = await getAccountOrThrow(accountId);
 	const profile = await profileService.getAccountProfile(account);
+	const user = await userRepository.findUserById(userId);
 
-	const response: ApiResponse<{ account: Account; profile: AccountProfile }> = {
+	delete user.password
+
+	const response: ApiResponse<GetAccountDataResponse> = {
 		status: 200, message: 'Dados da conta obtidos com sucesso',
 		data: {
 			account,
 			profile,
+			user
 		},
 	};
 
 	return response;
 }
 
+
 const accountService = {
 	createDevAccount,
 	createCompanyAccount,
 
 	checkEmailAvailability,
-	getAccountAndAccountProfile,
+	getAccountData,
 };
 
 export default accountService;

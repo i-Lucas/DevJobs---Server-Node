@@ -32,13 +32,13 @@ async function createCompanyAccount(req: Request, res: Response) {
 	return res.status(response.status).json(response);
 }
 
-async function getAccountAndAccountProfile(req: Request, res: Response) {
+async function getAccountData(req: Request, res: Response) {
 
 	const { id: userId }: UserJwtPayload = res.locals.user;
 
 	await new Promise((resolve) => setTimeout(resolve, 2500));
 
-	const response = await accountService.getAccountAndAccountProfile(userId);
+	const response = await accountService.getAccountData(userId);
 
 	return res.status(response.status).json(response);
 }
@@ -48,7 +48,7 @@ const accountController = {
 	createCompanyAccount,
 	checkEmailAvailability,
 	createDeveloperAccount,
-	getAccountAndAccountProfile,
+	getAccountData,
 };
 
 export default accountController;

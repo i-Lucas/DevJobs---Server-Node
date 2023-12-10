@@ -4,6 +4,8 @@ CREATE TYPE "AccountType" AS ENUM ('ADMIN', 'COMPANY', 'CANDIDATE');
 -- CreateTable
 CREATE TABLE "Users" (
     "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "firstName" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "createdAt" TEXT NOT NULL,

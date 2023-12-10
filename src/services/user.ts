@@ -13,9 +13,16 @@ async function getUserOrThrow(email: string): Promise<User> {
     return findUser;
 }
 
+function getUserFirstName(name: string): string {
+
+	const firstSpace = name.indexOf(' ');
+	return firstSpace !== -1 ? name.substring(0, firstSpace) : name;
+}
+
 const userService = {
 
-    getUserOrThrow
+    getUserOrThrow,
+    getUserFirstName
 }
 
 export default userService;

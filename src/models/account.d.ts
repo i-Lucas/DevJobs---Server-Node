@@ -1,3 +1,6 @@
+import { User } from "./user.js";
+import { AccountProfile } from "./profile/profile.js";
+
 export type AccountType = 'ADMIN' | 'COMPANY' | 'CANDIDATE';
 
 export interface Account {
@@ -25,3 +28,10 @@ export interface UserAccount {
 }
 
 export type CreateNewUserAccountData = Omit<UserAccount, 'id' | 'updatedAt' | 'createdAt'>;
+
+export interface GetAccountDataResponse {
+
+    account: Account;
+    profile: AccountProfile
+    user: Omit<User, 'password'>
+}

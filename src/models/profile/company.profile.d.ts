@@ -39,7 +39,7 @@ export interface CompanyProfileDetails {
     updatedAt: string;
 }
 
-interface CompanyProfileSupport {
+export interface CompanyProfileSupport {
 
     phone: string;
     rhEmail: string;
@@ -50,7 +50,7 @@ interface CompanyProfileSupport {
     updatedAt: string;
 }
 
-interface CompanyProfileSocial {
+export interface CompanyProfileSocial {
 
     github: string;
     website: string;
