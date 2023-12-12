@@ -53,7 +53,9 @@ export interface CompanyProfileSupport {
 export interface CompanyProfileSocial {
 
     github: string;
+    banner: string;
     website: string;
+    picture: string;
     twitter: string;
     facebook: string;
     linkedin: string;

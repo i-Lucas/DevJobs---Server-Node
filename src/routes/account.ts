@@ -13,4 +13,6 @@ accountRouter.post('/account/create-company-account', schemaHandler(profileSchem
 accountRouter.get('/account/get-account-data', tokenHandler, accountController.getAccountData);
 accountRouter.get('/account/check-email-availability/:email', accountController.checkEmailAvailability);
 
+accountRouter.get('/account/get-account-profile/:profileId', tokenHandler,  accountController.getAccountProfile)
+
 export default accountRouter;

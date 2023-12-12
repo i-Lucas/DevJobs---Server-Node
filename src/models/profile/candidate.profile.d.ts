@@ -36,6 +36,7 @@ export interface DeveloperProfileAbout {
     age: string;
     name: string;
     resume: string;
+    picture: string;
     occupation: string;
 
     createdAt: string;
@@ -136,7 +137,7 @@ export interface DeveloperProfileStackList {
 export type CreateNewDeveloperProfileData = Omit<DeveloperProfile, 'id' | 'updatedAt' | 'createdAt'>;
 
 export interface CreateDeveloperAccountRequest {
-    
+
     stack: Omit<DeveloperProfileStackList, 'id'>;
     projects: Omit<DeveloperProfileProjects, 'id'>;
     languages: Omit<DeveloperProfileLanguages, 'id'>;

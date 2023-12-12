@@ -1,7 +1,10 @@
 import db from '../config/db.js';
 
-import { CompanyProfile, CreateCompanyAccountRequest, NewCompanyProfile } from '../models/profile/company.profile.js';
+import { CompanyProfile, NewCompanyProfile } from '../models/profile/company.profile.js';
 import { DeveloperProfile, CreateDeveloperAccountRequest } from '../models/profile/candidate.profile.js';
+
+import appConfig from '../config/app.js';
+import { apiErrors, appMessageErros } from '../errors/index.js';
 
 const now = (): string => new Date().getTime().toString();
 
@@ -26,6 +29,7 @@ async function createCandidateProfile(profile: CreateDeveloperAccountRequest) {
 				create: {
 					...profile.about,
 					...createdAtAndUpdatedAt,
+					picture: appConfig.client.candidate.default_picture
 				},
 			},
 
@@ -120,8 +124,6 @@ async function getCandidateProfile(profileId: string): Promise<DeveloperProfile>
 	}
 }
 
-
-
 async function createCompanyProfile(profile: NewCompanyProfile) {
 
 	const createdAtAndUpdatedAt = createdAtAndUpdatedAtNow();
@@ -160,6 +162,8 @@ async function createCompanyProfile(profile: NewCompanyProfile) {
 				create: {
 					...profile.social,
 					...createdAtAndUpdatedAt,
+					banner: appConfig.client.company.default_banner,
+					picture: appConfig.client.company.default_picture,
 				}
 			},
 
@@ -189,6 +193,10 @@ async function getCompanyProfile(profileId: string): Promise<CompanyProfile> {
 			CompanyProfileSupportInfoModel: true
 		},
 	});
+
+	if (!profile) {
+		apiErrors.NotFound(appMessageErros.account.notFound)
+	}
 
 	return {
 

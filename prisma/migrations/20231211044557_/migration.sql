@@ -119,6 +119,8 @@ CREATE TABLE "CompanyProfileSocialNetworkModel" (
     "facebook" TEXT NOT NULL,
     "instagram" TEXT NOT NULL,
     "linkedin" TEXT NOT NULL,
+    "picture" TEXT NOT NULL,
+    "banner" TEXT NOT NULL,
     "createdAt" TEXT NOT NULL,
     "updatedAt" TEXT NOT NULL,
 
@@ -156,6 +158,7 @@ CREATE TABLE "CandidateProfileAboutModel" (
     "age" TEXT NOT NULL,
     "occupation" TEXT NOT NULL,
     "resume" TEXT NOT NULL,
+    "picture" TEXT NOT NULL,
     "createdAt" TEXT NOT NULL,
     "updatedAt" TEXT NOT NULL,
 

@@ -160,6 +160,9 @@ model CompanyProfileSocialNetworkModel {
   instagram String
   linkedin  String
 
+  picture String
+  banner  String
+
   createdAt String
   updatedAt String
 }
@@ -214,6 +217,8 @@ model CandidateProfileAboutModel {
   age        String
   occupation String
   resume     String
+
+  picture String
 
   createdAt String
   updatedAt String
