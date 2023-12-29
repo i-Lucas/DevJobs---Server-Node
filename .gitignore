@@ -2,3 +2,5 @@ node_modules/
 db.sh
 
 backup/
+
+prisma/migrations

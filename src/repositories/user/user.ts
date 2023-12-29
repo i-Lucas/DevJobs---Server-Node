@@ -1,18 +1,18 @@
-import db from '../config/db.js';
+import db from '../../config/db.js';
+import appConfig from '../../config/app.js';
 
-import { CreateNewUser } from '../models/user.js';
-import userService from '../services/user.js';
-
-const now = (): string => new Date().getTime().toString();
+import utils from '../../utils/appUtils.js';
+import { CreateNewUser } from '../../models/user.js';
 
 async function createNewUser(data: CreateNewUser) {
+
+	const createdAtAndUpdatedAt = utils.createdAtAndUpdatedAtNow();
 
 	return await db.users.create({
 		data: {
 			...data,
-			createdAt: now(),
-			updatedAt: now(),
-			firstName: userService.getUserFirstName(data.name),
+			...createdAtAndUpdatedAt,
+			photo: appConfig.client.user.default_picture
 		}
 	});
 }

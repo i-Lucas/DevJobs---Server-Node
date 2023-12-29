@@ -36,8 +36,8 @@ export interface DeveloperProfileAbout {
     age: string;
     name: string;
     resume: string;
-    picture: string;
     occupation: string;
+    picture: string;
 
     createdAt: string;
     updatedAt: string;
@@ -149,4 +149,10 @@ export interface CreateDeveloperAccountRequest {
     about: Omit<DeveloperProfileAbout, 'id' | 'updatedAt' | 'createdAt'>;
     address: Omit<DeveloperProfileAddress, 'id' | 'updatedAt' | 'createdAt'>;
     contact: Omit<DeveloperProfileContact, 'id' | 'updatedAt' | 'createdAt'>;
+}
+
+export interface CreateNewAcademicEducation {
+
+    profileId: string,
+    data: Omit<DeveloperProfileAcademicEducation, 'id' | 'updatedAt' | 'createdAt'>;
 }

@@ -2,6 +2,10 @@ export interface AppConfig {
 
     client: {
 
+        user: {
+            default_picture: string;
+        },
+
         candidate: {
 
             default_picture: string;

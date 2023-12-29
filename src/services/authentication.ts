@@ -2,21 +2,11 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 import config from '../config/index.js';
+
+import { SigninUser } from '../models/user.js';
+import userRepository from '../repositories/user/user.js';
+
 import { apiErrors, appMessageErros } from '../errors/index.js';
-import { CreateNewUser, SigninUser } from '../models/user.js';
-import userRepository from '../repositories/user.js';
-
-/*
-async function signup({ email, password }: CreateNewUser) {
-
-	email = email.toLowerCase();
-	const findUser = await userRepository.findUserByEmail(email);
-	if (findUser) apiErrors.Conflict(appMessageErros.auth.user.emailAlreadyUse);
-
-	password = await bcrypt.hash(password, 10);
-	await userRepository.createNewUser({ email, password });
-}
-*/
 
 async function signin({ email, password }: SigninUser) {
 
@@ -38,6 +28,5 @@ async function signin({ email, password }: SigninUser) {
 };
 
 export const authService = {
-	signin,
-	// signup
+	signin
 };

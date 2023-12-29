@@ -22,27 +22,9 @@ async function signin(req: Request, res: Response): Promise<ApiResponse<{ token:
 	res.send(response);
 	return response;
 }
-/*
-async function signup(req: Request, res: Response): Promise<ApiResponse<null>> {
-
-	const data: { email: string; password: string } = req.body;
-	await authService.signup(data);
-
-	await new Promise((resolve) => setTimeout(resolve, 2500));
-
-	const response: ApiResponse<null> = {
-		status: 201,
-		message: 'Usuário cadastrado com sucesso!',
-	};
-
-	res.send(response);
-	return response;
-}
-*/
 
 const authController = {
-	signin,
-	// signup
+	signin
 };
 
 export default authController;

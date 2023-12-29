@@ -7,7 +7,10 @@ import {
     AccountUserMessageErrors,
     accountMessageErrors,
     accountUserMessageErrors
+    
 } from './account.js';
+
+import { ProfiletMessageErrors, profileMessageErrors } from './profile.js';
 
 interface ApiError {
 
@@ -40,13 +43,15 @@ interface AppMessageErrors {
     auth: AuthMessageErrors,
     api: ApiMessageErros,
     account: AccountMessageErrors,
-    accountUser: AccountUserMessageErrors
+    accountUser: AccountUserMessageErrors,
+    profile: ProfiletMessageErrors
 }
 
 export const appMessageErros: AppMessageErrors = {
 
-    auth: { ...authMessageErrors },
-    api: { ...apiErrorsMessage },
-    account: { ...accountMessageErrors },
-    accountUser: { ...accountUserMessageErrors }
+    auth: authMessageErrors,
+    api: apiErrorsMessage,
+    account: accountMessageErrors,
+    accountUser: accountUserMessageErrors,
+    profile: profileMessageErrors
 };
