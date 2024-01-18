@@ -8,6 +8,8 @@ import developerRouter from './profile/developer/developer.js';
 
 const appRouter = Router();
 
+appRouter.get('/hello', (req, res) => res.sendStatus(200))
+
 appRouter.use(authRouter);
 
 appRouter.use(userRouter);
