@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import { tokenHandler } from '../../../middlewares/token.js';
-import companyProfileController from '../../../controllers/company/company.js';
+import companyProfileController from '../../../controllers/company/profile.js';
 
 const companyRouter = Router();
 

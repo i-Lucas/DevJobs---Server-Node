@@ -8,41 +8,45 @@ async function getDeveloperProfile(req: Request, res: Response) {
 
     const { profileId } = req.params;
 
-    await new Promise((resolve) => setTimeout(resolve, 2500));
+    // await new Promise((resolve) => setTimeout(resolve, 1500));
 
     const profile = await developerProfileService.getDeveloperProfile(profileId);
 
     const response: ApiResponse<DeveloperProfile> = {
         status: 200,
+        data: profile,
         message: 'Perfil encontrado com sucesso',
-        data: profile
     }
 
     return res.status(response.status).json(response);
 }
 
-async function addNewDataFieldInDeveloperProfile(req: Request, res: Response) {
+async function updateDeveloperProfile(req: Request, res: Response) {
 
-    const { field, data, profileId } = req.body;
+    const { identifier, data, profileId } = req.body;
 
-    await new Promise((resolve) => setTimeout(resolve, 2500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    const id = await developerProfileService.addNewDeveloperProfileField({ data, field, profileId });
-
-    const response: ApiResponse<{ id: string }> = {
-        status: 200,
-        message: 'Perfil atualizado com sucesso',
-        data: {
-            id
-        }
-    }
+    const response = await developerProfileService.updateDeveloperProfile({ data, identifier, profileId });
 
     return res.status(response.status).json(response);
 };
 
+async function deleteDeveloperProfileField(req: Request, res: Response) {
+    
+    const { id, identifier } = req.body;
+
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    const response = await developerProfileService.deleteDeveloperProfileField({ id, identifier });
+
+    return res.status(response.status).json(response);
+}
+
 const developerProfileController = {
     getDeveloperProfile,
-    addNewDataFieldInDeveloperProfile
+    updateDeveloperProfile,
+    deleteDeveloperProfileField
 };
 
 export default developerProfileController;

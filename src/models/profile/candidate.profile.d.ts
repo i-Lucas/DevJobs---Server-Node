@@ -18,6 +18,8 @@ export interface DeveloperProfile {
 }
 
 export interface DeveloperProfileAddress {
+    
+    id?: string;
 
     cep: string;
     city: string;
@@ -33,6 +35,8 @@ export interface DeveloperProfileAddress {
 
 export interface DeveloperProfileAbout {
 
+    id?: string;
+
     age: string;
     name: string;
     resume: string;
@@ -44,6 +48,8 @@ export interface DeveloperProfileAbout {
 }
 
 export interface DeveloperProfileContact {
+
+    id?: string;
 
     phone: string;
     email: string;
@@ -152,7 +158,36 @@ export interface CreateDeveloperAccountRequest {
 }
 
 export interface CreateNewAcademicEducation {
-
-    profileId: string,
-    data: Omit<DeveloperProfileAcademicEducation, 'id' | 'updatedAt' | 'createdAt'>;
+    data: Omit<DeveloperProfileAcademicEducation, 'id' | 'updatedAt' | 'createdAt'> & { profileId: string }
 }
+
+export interface CreateNewJobExperience {
+    data: Omit<DeveloperProfileJobExperiences, 'id' | 'updatedAt' | 'createdAt'> & { profileId: string }
+}
+
+export interface CreateNewCertificate {
+    data: Omit<DeveloperProfileCertificates, 'id' | 'updatedAt' | 'createdAt'> & { profileId: string }
+}
+
+export interface CreateNewLanguage {
+    data: Omit<DeveloperProfileLanguages, 'id' | 'updatedAt' | 'createdAt'> & { profileId: string }
+}
+
+export interface CreateNewStack {
+    data: Omit<DeveloperProfileStackList, 'id' | 'updatedAt' | 'createdAt'> & { profileId: string }
+}
+
+export interface CreateNewProject {
+    data: Omit<DeveloperProfileProjects, 'id' | 'updatedAt' | 'createdAt'> & { profileId: string }
+}
+
+type DeveloperProfileEditFieldsIdentifier =
+    'DEVELOPER_ABOUT' |
+    'DEVELOPER_ADDRESS' |
+    'DEVELOPER_CONTACT' |
+    'DEVELOPER_PROJECTS' |
+    'DEVELOPER_EDUCATION' |
+    'DEVELOPER_LANGUAGES' |
+    'DEVELOPER_STACKLIST' |
+    'DEVELOPER_EXPERIENCES' |
+    'DEVELOPER_CERTIFICATES'

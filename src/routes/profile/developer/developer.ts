@@ -7,6 +7,8 @@ const developerRouter = Router();
 
 developerRouter.get('/profile/get-developer-profile/:profileId', tokenHandler, developerProfileController.getDeveloperProfile);
 
-developerRouter.post('/profile/developer/new/field', tokenHandler, developerProfileController.addNewDataFieldInDeveloperProfile);
+developerRouter.post('/profile/developer/update', tokenHandler, developerProfileController.updateDeveloperProfile);
+
+developerRouter.post('/profile/developer/delete', tokenHandler, developerProfileController.deleteDeveloperProfileField);
 
 export default developerRouter;

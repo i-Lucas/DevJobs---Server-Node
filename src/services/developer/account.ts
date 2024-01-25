@@ -5,7 +5,7 @@ import userRepository from "../../repositories/user/user.js";
 import { apiErrors, appMessageErros } from "../../errors/index.js";
 import accountRepository from "../../repositories/account/account.js";
 import accountUserRepository from '../../repositories/account/user.js';
-import developerProfileRepository from "../../repositories/profile/developer.js";
+import developerProfileRepository from '../../repositories/profile/developer/index.js';
 import { CreateDeveloperAccountRequest } from "../../models/profile/candidate.profile.js";
 
 async function createDevAccount(profile: CreateDeveloperAccountRequest) {
@@ -16,7 +16,7 @@ async function createDevAccount(profile: CreateDeveloperAccountRequest) {
 		apiErrors.Conflict(appMessageErros.auth.user.emailAlreadyUse);
 	}
 
-	const { id: profileId } = await developerProfileRepository.createDeveloperProfile(profile);
+	const { id: profileId } = await developerProfileRepository.create.profile(profile);
 
 	const { id: accountId } = await accountRepository.createAccount({
 		accountType: 'CANDIDATE', profileId
