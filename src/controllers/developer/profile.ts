@@ -33,7 +33,7 @@ async function updateDeveloperProfile(req: Request, res: Response) {
 };
 
 async function deleteDeveloperProfileField(req: Request, res: Response) {
-    
+
     const { id, identifier } = req.body;
 
     await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -43,10 +43,22 @@ async function deleteDeveloperProfileField(req: Request, res: Response) {
     return res.status(response.status).json(response);
 }
 
+async function addDeveloperProfileField(req: Request, res: Response) {
+
+    const { identifier, data, profileId } = req.body;
+
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    const response = await developerProfileService.addDeveloperProfileField({ data, identifier, profileId });
+
+    return res.status(response.status).json(response);
+}
+
 const developerProfileController = {
     getDeveloperProfile,
     updateDeveloperProfile,
-    deleteDeveloperProfileField
+    addDeveloperProfileField,
+    deleteDeveloperProfileField,
 };
 
 export default developerProfileController;

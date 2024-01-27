@@ -2,12 +2,86 @@ import db from '../../config/db.js'
 import utils from "../../utils/appUtils.js";
 import appConfig from '../../config/app.js';
 
-import { NewCompanyProfile } from "../../models/profile/company.profile.js";
+import {
+	NewCompanyProfile,
+	CompanyProfileSocial,
+	CompanyProfileSupport,
+	CompanyProfileAddress,
+	CompanyProfileDetails,
+} from "../../models/profile/company.profile.js";
+
+async function updateContact(
+	data: Omit<CompanyProfileSupport, 'createdAt' | 'updatedAt'>):
+	Promise<CompanyProfileSupport> {
+
+	const now = utils.now();
+
+	return await db.companyProfileSupportInfoModel.update({
+		where: {
+			id: data.id
+		},
+		data: {
+			...data,
+			updatedAt: now
+		}
+	})
+}
+
+async function updateAddress(
+	data: Omit<CompanyProfileAddress, 'createdAt' | 'updatedAt'>):
+	Promise<CompanyProfileAddress> {
+
+	const now = utils.now();
+
+	return await db.companyProfileAddressModel.update({
+		where: {
+			id: data.id
+		},
+		data: {
+			...data,
+			updatedAt: now
+		}
+	})
+}
+
+async function updateDetails(
+	data: Omit<CompanyProfileDetails, 'createdAt' | 'updatedAt'>):
+	Promise<CompanyProfileDetails> {
+
+	const now = utils.now();
+
+	return await db.companyProfileDetailsModel.update({
+		where: {
+			id: data.id
+		},
+		data: {
+			...data,
+			updatedAt: now
+		}
+	})
+}
+
+async function updateSocial(
+	data: Omit<CompanyProfileSocial, 'createdAt' | 'updatedAt'>):
+	Promise<CompanyProfileSocial> {
+
+	const now = utils.now();
+
+	return await db.companyProfileSocialNetworkModel.update({
+		where: {
+			id: data.id
+		},
+		data: {
+			...data,
+			updatedAt: now
+		}
+	})
+}
 
 async function createCompanyProfile(profile: NewCompanyProfile) {
 
 	const createdAtAndUpdatedAt = utils.createdAtAndUpdatedAtNow();
-	
+
 	return await db.companyProfile.create({
 
 		data: {
@@ -76,6 +150,10 @@ async function getCompanyProfile(profileId: string) {
 };
 
 const companyProfileRepository = {
+	updateSocial,
+	updateContact,
+	updateAddress,
+	updateDetails,
 	createCompanyProfile,
 	getCompanyProfile
 }

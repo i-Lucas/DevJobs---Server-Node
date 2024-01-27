@@ -7,4 +7,6 @@ const companyRouter = Router();
 
 companyRouter.get('/profile/get-company-profile/:profileId', tokenHandler, companyProfileController.getCompanyProfile);
 
+companyRouter.post('/profile/company/update', tokenHandler, companyProfileController.updateCompanyProfile);
+
 export default companyRouter;

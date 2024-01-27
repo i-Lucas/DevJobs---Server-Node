@@ -11,4 +11,6 @@ developerRouter.post('/profile/developer/update', tokenHandler, developerProfile
 
 developerRouter.post('/profile/developer/delete', tokenHandler, developerProfileController.deleteDeveloperProfileField);
 
+developerRouter.post('/profile/developer/add', tokenHandler, developerProfileController.addDeveloperProfileField);
+
 export default developerRouter;

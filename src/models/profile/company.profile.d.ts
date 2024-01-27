@@ -1,5 +1,7 @@
 export interface CompanyProfileAddress {
 
+    id?: string;
+
     cep: string;
     city: string;
     state: string;
@@ -25,6 +27,8 @@ export interface CompanyProfileOwnerInfo {
 
 export interface CompanyProfileDetails {
 
+    id?: string;
+
     cnpj: string;
     about: string;
     teamSize: string;
@@ -41,6 +45,8 @@ export interface CompanyProfileDetails {
 
 export interface CompanyProfileSupport {
 
+    id?: string;
+
     phone: string;
     rhEmail: string;
     whatsapp: string;
@@ -51,6 +57,8 @@ export interface CompanyProfileSupport {
 }
 
 export interface CompanyProfileSocial {
+
+    id?: string;
 
     github: string;
     banner: string;
@@ -97,3 +105,11 @@ export interface CreateCompanyAccountRequest {
     details: Omit<CompanyProfileDetails, 'id' | 'updatedAt' | 'createdAt'>;
     address: Omit<CompanyProfileAddress, 'id' | 'updatedAt' | 'createdAt'>;
 }
+
+type CompanyProfileEditFieldsIdentifier =
+    'COMPANY_ADDRESS' |
+    'COMPANY_DETAILS' |
+    'COMPANY_CONTACT' |
+    'COMPANY_SOCIAL' |
+    'COMPANY_OWNER' |
+    'COMPANY_PERMISSIONS'  // TODO

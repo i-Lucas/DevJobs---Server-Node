@@ -21,8 +21,21 @@ async function getCompanyProfile(req: Request, res: Response) {
     return res.status(response.status).json(response);
 };
 
+async function updateCompanyProfile(req: Request, res: Response) {
+
+    const { identifier, data, profileId } = req.body;
+
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    const response = await companyProfileService.updateCompanyProfile({ data, identifier, profileId });
+
+    return res.status(response.status).json(response);
+};
+
+
 const companyProfileController = {
-    getCompanyProfile
+    getCompanyProfile,
+    updateCompanyProfile
 }
 
 export default companyProfileController;

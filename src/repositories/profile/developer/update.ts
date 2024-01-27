@@ -56,7 +56,7 @@ async function updateAbout(
 
     return await db.candidateProfileAboutModel.update({
         where: {
-            profileId: data.id
+            id: data.id
         },
         data: {
             ...data,
