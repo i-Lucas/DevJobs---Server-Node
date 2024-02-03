@@ -3,7 +3,7 @@ import companyAccountService from '../../services/company/account.js';
 
 async function createCompanyAccount(req: Request, res: Response) {
 
-	await new Promise((resolve) => setTimeout(resolve, 2500));
+	// await new Promise((resolve) => setTimeout(resolve, 2500));
 
 	const response = await companyAccountService.createCompanyAccount(req.body);
 
