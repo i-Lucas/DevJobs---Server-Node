@@ -38,8 +38,13 @@ async function createCompanyAccount(profile: CreateCompanyAccountRequest) {
 
 	await accountUserRepository.createAccountUser({ accountId, userId });
 
-	const response: ApiResponse<{}> = {
-		status: 201, message: 'Conta criada com sucesso!',
+	const response: ApiResponse<{ profileId: string, accountId: string }> = {
+		status: 201,
+		message: 'Conta criada com sucesso!',
+		data: {
+			accountId,
+			profileId
+		}
 	};
 
 	return response;

@@ -76,7 +76,8 @@ async function getAccountData(userId: string) {
 };
 
 const accountService = {
-	getAccountData
+	getAccountData,
+	getAccountUserOrThrow
 };
 
 export default accountService;

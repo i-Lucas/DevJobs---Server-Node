@@ -190,7 +190,6 @@ model CandidateProfile {
 
 model CandidateProfileContactModel {
   //
-
   id String @id @default(uuid())
 
   profileId String           @unique
@@ -207,7 +206,6 @@ model CandidateProfileContactModel {
 
 model CandidateProfileAboutModel {
   //
-
   id String @id @default(uuid())
 
   profileId String           @unique
@@ -225,7 +223,6 @@ model CandidateProfileAboutModel {
 
 model CandidateProfileAddressModel {
   //
-
   id String @id @default(uuid())
 
   profileId String           @unique
@@ -245,7 +242,6 @@ model CandidateProfileAddressModel {
 
 model CandidateProfileAcademicEducationModel {
   // 
-
   id String @id @default(uuid())
 
   profileId String
@@ -266,7 +262,6 @@ model CandidateProfileAcademicEducationModel {
 
 model CandidateProfileJobExperiencesModel {
   // 
-
   id String @id @default(uuid())
 
   profileId String
@@ -286,7 +281,6 @@ model CandidateProfileJobExperiencesModel {
 
 model CandidateProfileCertificatesModel {
   // 
-
   id String @id @default(uuid())
 
   profileId String
@@ -303,7 +297,6 @@ model CandidateProfileCertificatesModel {
 
 model CandidateProfileProjectsModel {
   // 
-
   id String @id @default(uuid())
 
   profileId String
@@ -319,7 +312,6 @@ model CandidateProfileProjectsModel {
 
 model CandidateProfileLanguagesModel {
   // 
-
   id String @id @default(uuid())
 
   profileId String
@@ -334,7 +326,6 @@ model CandidateProfileLanguagesModel {
 
 model CandidateProfileStackListModel {
   // 
-
   id String @id @default(uuid())
 
   profileId String
@@ -347,4 +338,95 @@ model CandidateProfileStackListModel {
   updatedAt String
 }
 
-// -------------------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------- Hiring Process
+
+enum HiringProcessSteps {
+  OPEN_FOR_APPLICATIONS
+  RESUME_SCREENING
+  INTERVIEW_SELECTION
+  INITIAL_INTERVIEWS
+  TECHNICAL_ASSESSMENT
+  FINAL_INTERVIEWS
+  BEHAVIORAL_ASSESSMENT
+  PROJECT_CHALLENGE
+  MANAGER_INTERVIEWS
+  REFERENCE_CHECK
+  JOB_OFFER
+  PROCESS_COMPLETED
+  CANCELLED
+  FROZEN
+}
+
+model HiringProcess {
+  //
+  id String @id @default(uuid())
+
+  accountId String
+
+  title            String
+  description      String
+  category         String
+  seniority        String
+  differences      String[]
+  stacklist        String[]
+  requirements     String[]
+  benefits         String[]
+  salaryRange      String
+  negotiable       Boolean
+  contractType     String
+  locationType     String
+  workload         String
+  deadline         String
+  pcd              Boolean
+  recruiter        String
+  subscribersCount Int
+
+  steps ProcessStep[]
+
+  createdAt String
+  updatedAt String
+}
+
+model ProcessStep {
+  //
+  id String @id @default(uuid())
+
+  identifier      HiringProcessSteps
+  candidatesLists ProcessStepList[]
+
+  hiringProcess   HiringProcess? @relation(fields: [hiringProcessId], references: [id])
+  hiringProcessId String?
+
+  createdAt String
+  updatedAt String
+}
+
+model ProcessStepList {
+  // 
+  id String @id @default(uuid())
+
+  name        String
+  description String
+  candidates  HiringDeveloperSubscriber[]
+
+  processStep   ProcessStep? @relation(fields: [processStepId], references: [id])
+  processStepId String?
+
+  createdAt String
+  updatedAt String
+}
+
+model HiringDeveloperSubscriber {
+  // 
+  id String @id @default(uuid())
+
+  name      String
+  picture   String
+  profileId String
+
+  ProcessStepList   ProcessStepList? @relation(fields: [processStepListId], references: [id])
+  processStepListId String?
+
+  createdAt String
+  updatedAt String
+}
