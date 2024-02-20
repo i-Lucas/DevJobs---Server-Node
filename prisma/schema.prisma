@@ -423,6 +423,7 @@ model HiringDeveloperSubscriber {
   name      String
   picture   String
   profileId String
+  userId    String
 
   ProcessStepList   ProcessStepList? @relation(fields: [processStepListId], references: [id])
   processStepListId String?

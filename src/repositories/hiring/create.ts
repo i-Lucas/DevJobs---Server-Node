@@ -1,7 +1,7 @@
 import db from '../../config/db.js';
 import utils from '../../utils/appUtils.js';
 
-import { CreateNewProcessData, NewHiringProcessResponse } from '../../models/hiring.js';
+import { CreateNewProcessData, NewHiringProcessResponse, ProcessStepsList } from '../../models/hiring.js';
 
 interface CreateNewProcess {
     accountId: string;
@@ -56,22 +56,6 @@ async function newHiringProcess({ data, accountId }: CreateNewProcess): Promise<
             ...createdAtAndUpdatedAt,
         }
     })
-
-    /*
-    // colocar um dev na lista: ( isso aqui não existe, é só para testar )
-    await db.hiringDeveloperSubscriber.create({
-
-        data: {
-
-            name: 'Lucas Oliveira',
-            picture: 'https://www.svgrepo.com/show/527946/user-circle.svg',
-            profileId: 'e07f879f-3075-4ce4-94ef-02f6f6dae8bf',
-
-            processStepListId: subscribersListId,
-            ...createdAtAndUpdatedAt,
-        }
-    })
-    */
 
     return {
 

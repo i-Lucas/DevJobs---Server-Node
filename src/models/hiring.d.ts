@@ -77,6 +77,7 @@ export interface HiringDeveloperSubscriber {
 
     name: string;
     picture: string;
+    userId: string;
     profileId: string;
     processStepListId?: string; // database
 
@@ -105,4 +106,25 @@ interface NewHiringProcessResponse {
         qualifiedListId: string;
         subscribersListId: string;
     }
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+// interface CandidateSubscriber {
+//     userId: string;
+//     name: string;
+//     profileId: string;
+//     picture: string;
+// }
+
+export interface DeveloperApplyToProcessRequest {
+
+    processId: string;
+    candidate: Omit<HiringDeveloperSubscriber, 'createdAt' | 'updatedAt'>;
+}
+
+export interface ApplyNewCandidate {
+
+    candidate: Omit<HiringDeveloperSubscriber, 'createdAt' | 'updatedAt'>;
+    processStepListId: ProcessStepsList['id'];
 }

@@ -1,6 +1,26 @@
 import db from '../../config/db.js';
 import { HiringProcess } from '../../models/hiring.js';
 
+async function getHiringProcessById(processId: string) {
+
+    return await db.hiringProcess.findUnique({
+        where: {
+            id: processId
+        },
+        include: {
+            steps: {
+                include: {
+                    candidatesLists: {
+                        include: {
+                            candidates: true
+                        }
+                    }
+                }
+            }
+        }
+    })
+}
+
 async function getCompanyHiringProcessListByAccountId(accountId: string): Promise<HiringProcess[]> {
 
     return await db.hiringProcess.findMany({
@@ -25,7 +45,8 @@ async function getCompanyHiringProcessListByAccountId(accountId: string): Promis
 }
 
 const getHiringProcessPackage = {
-    getCompanyHiringProcessListByAccountId
+    getHiringProcessById,
+    getCompanyHiringProcessListByAccountId,
 }
 
 export default getHiringProcessPackage;

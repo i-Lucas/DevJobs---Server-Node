@@ -4,13 +4,15 @@ import { AuthMessageErrors, authMessageErrors } from './user.js';
 
 import {
     AccountMessageErrors,
-    AccountUserMessageErrors,
     accountMessageErrors,
+    AccountUserMessageErrors,
     accountUserMessageErrors
-    
+
 } from './account.js';
 
 import { ProfiletMessageErrors, profileMessageErrors } from './profile.js';
+
+import { HiringMessageErrors, hiringMessageErrors } from './hiring.js';
 
 interface ApiError {
 
@@ -21,8 +23,8 @@ interface ApiError {
 interface ThrowResponseObject {
 
     NotFound: (message: string) => ApiError;
-    BadRequest: (message: string) => ApiError;
     Conflict: (message: string) => ApiError;
+    BadRequest: (message: string) => ApiError;
     Unauthorized: (message: string) => ApiError;
     UnprocessableEntity: (message: string) => ApiError;
     InternalServerError: (message: string) => ApiError;
@@ -40,18 +42,20 @@ export const apiErrors: ThrowResponseObject = {
 
 interface AppMessageErrors {
 
-    auth: AuthMessageErrors,
     api: ApiMessageErros,
+    auth: AuthMessageErrors,
+    hiring: HiringMessageErrors,
     account: AccountMessageErrors,
+    profile: ProfiletMessageErrors,
     accountUser: AccountUserMessageErrors,
-    profile: ProfiletMessageErrors
 }
 
 export const appMessageErros: AppMessageErrors = {
 
-    auth: authMessageErrors,
     api: apiErrorsMessage,
+    auth: authMessageErrors,
+    hiring: hiringMessageErrors,
     account: accountMessageErrors,
+    profile: profileMessageErrors,
     accountUser: accountUserMessageErrors,
-    profile: profileMessageErrors
 };

@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
 
 import { UserJwtPayload } from '../../models/user.js';
+
 import hiringService from '../../services/hiring/hiring.js';
 
 async function startHiringProcess(req: Request, res: Response) {
 
     const user: UserJwtPayload = res.locals.user;
 
-    await new Promise((resolve) => setTimeout(resolve, 6000));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     const response = await hiringService.createProcess({
         data: req.body,
@@ -21,7 +22,7 @@ async function getCompanyHiringProcess(req: Request, res: Response) {
 
     const { id: userId }: UserJwtPayload = res.locals.user;
 
-    await new Promise((resolve) => setTimeout(resolve, 6000));
+    await new Promise((resolve) => setTimeout(resolve, 600));
 
     const response = await hiringService.getCompanyHiringProcessList(userId);
 
