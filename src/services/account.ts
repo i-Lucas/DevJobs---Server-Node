@@ -5,9 +5,11 @@ import userRepository from '../repositories/user/user.js';
 import developerProfileService from './developer/profile.js';
 import { apiErrors, appMessageErros } from '../errors/index.js';
 import accountRepository from '../repositories/account/account.js';
-import accountUserRepository from '../repositories/account/user.js';
+// import accountUserRepository from '../repositories/account/user.js';
 import { Account, GetAccountDataResponse } from '../models/account.js';
+import { UserJwtPayload } from '../models/user.js';
 
+/*
 async function getAccountUserOrThrow(userId: string) {
 
 	const accountUser = await accountUserRepository.getAccountUser(userId);
@@ -28,7 +30,7 @@ async function getAccountOrThrow(accountId: string) {
 	}
 
 	return account;
-}
+}*/
 
 async function getAccountProfileByProfileId(profileId: string) {
 
@@ -52,19 +54,30 @@ async function getAccountProfile(account: Account) {
 	}
 };
 
-async function getAccountData(userId: string) {
+async function getAccountData({ accountId, profileId, userId }: Omit<UserJwtPayload, 'email'>) {
 
-	const { accountId } = await getAccountUserOrThrow(userId);
-
-	const account = await getAccountOrThrow(accountId);
-
-	const profile = await getAccountProfileByProfileId(account.profileId);
 	const user = await userRepository.findUserById(userId);
+
+	if (!user) {
+		apiErrors.NotFound(appMessageErros.auth.user.notFound);
+	}
+
+	const account = await accountRepository.getAccount(accountId);
+
+	if (!account) {
+		apiErrors.NotFound(appMessageErros.account.notFound);
+	}
+
+	const profile = await getAccountProfileByProfileId(profileId);
+
+	if (!profile) {
+		apiErrors.NotFound(appMessageErros.profile.notFound);
+	}
 
 	delete user.password
 
 	const response: ApiResponse<GetAccountDataResponse> = {
-		status: 200, message: 'Dados da conta obtidos com sucesso',
+		status: 200, message: 'Dados da conta obtidos com sucesso!',
 		data: {
 			account,
 			profile,
@@ -76,8 +89,7 @@ async function getAccountData(userId: string) {
 };
 
 const accountService = {
-	getAccountData,
-	getAccountUserOrThrow
+	getAccountData
 };
 
 export default accountService;

@@ -6,20 +6,20 @@ import { apiErrors, appMessageErros } from "../errors/index.js";
 
 async function getUserOrThrow(email: string): Promise<User> {
 
-    const findUser = await userRepository.findUserByEmail(email);
+	const user = await userRepository.getUserAndAccountByEmail(email);
 
-    if (!findUser) {
-        apiErrors.NotFound(appMessageErros.auth.user.notFound);
-    }
+	if (!user) {
+		apiErrors.NotFound(appMessageErros.auth.user.notFound);
+	}
 
-    return findUser;
+	return user;
 }
 
 async function checkEmailAvailability(email: string) {
 
-	const user = await userRepository.findUserByEmail(email);
+	const userEmail = await userRepository.getOnlyUserEmail(email);
 
-	if (user) {
+	if (userEmail) {
 		apiErrors.Conflict(appMessageErros.auth.user.emailAlreadyUse);
 	}
 
@@ -33,7 +33,7 @@ async function checkEmailAvailability(email: string) {
 
 const userService = {
 
-    getUserOrThrow,
+	getUserOrThrow,
 	checkEmailAvailability
 }
 

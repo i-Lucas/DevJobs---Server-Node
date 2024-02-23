@@ -5,11 +5,11 @@ import accountService from '../services/account.js';
 
 async function getAccountData(req: Request, res: Response) {
 
-	const { id: userId }: UserJwtPayload = res.locals.user;
+	const { userId, profileId, accountId }: UserJwtPayload = res.locals.user;
 
 	// await new Promise((resolve) => setTimeout(resolve, 2500));
 
-	const response = await accountService.getAccountData(userId);
+	const response = await accountService.getAccountData({ userId, profileId, accountId });
 
 	return res.status(response.status).json(response);
 }

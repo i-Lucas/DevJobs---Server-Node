@@ -3,11 +3,14 @@ import utils from "../../utils/appUtils.js";
 import appConfig from '../../config/app.js';
 
 import {
+
 	NewCompanyProfile,
 	CompanyProfileSocial,
 	CompanyProfileSupport,
 	CompanyProfileAddress,
 	CompanyProfileDetails,
+	CreateCompanyAccountRequest,
+
 } from "../../models/profile/company.profile.js";
 
 async function updateContact(
@@ -78,7 +81,7 @@ async function updateSocial(
 	})
 }
 
-async function createCompanyProfile(profile: NewCompanyProfile) {
+async function createCompanyProfile(profile: CreateCompanyAccountRequest) {
 
 	const createdAtAndUpdatedAt = utils.createdAtAndUpdatedAtNow();
 
@@ -98,16 +101,6 @@ async function createCompanyProfile(profile: NewCompanyProfile) {
 			CompanyProfileDetailsModel: {
 				create: {
 					...profile.details,
-					...createdAtAndUpdatedAt,
-				}
-			},
-
-			CompanyProfileOwnerInfoModel: {
-				create: {
-					userId: profile.userId,
-					email: profile.account.email,
-					name: profile.account.name,
-					phone: profile.account.phone,
 					...createdAtAndUpdatedAt,
 				}
 			},
@@ -142,20 +135,30 @@ async function getCompanyProfile(profileId: string) {
 		include: {
 			CompanyProfileAddressModel: true,
 			CompanyProfileDetailsModel: true,
-			CompanyProfileOwnerInfoModel: true,
+			CompanyProfileSupportInfoModel: true,
 			CompanyProfileSocialNetworkModel: true,
-			CompanyProfileSupportInfoModel: true
 		},
 	});
 };
+
+async function getCompanyAccountIdByProfileId(profileId: string) {
+
+	return await db.account.findUnique({
+		where: {
+			profileId
+		}
+	})
+};
+
 
 const companyProfileRepository = {
 	updateSocial,
 	updateContact,
 	updateAddress,
 	updateDetails,
+	getCompanyProfile,
 	createCompanyProfile,
-	getCompanyProfile
+	getCompanyAccountIdByProfileId,
 }
 
 export default companyProfileRepository;

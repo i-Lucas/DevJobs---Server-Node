@@ -3,23 +3,28 @@ import jwt from 'jsonwebtoken';
 
 import config from '../config/index.js';
 
-import { SigninUser } from '../models/user.js';
+import { SigninUser, UserJwtPayload } from '../models/user.js';
 import userRepository from '../repositories/user/user.js';
 
 import { apiErrors, appMessageErros } from '../errors/index.js';
 
 async function signin({ email, password }: SigninUser) {
 
-	const user = await userRepository.findUserByEmail(email);
-	if (!user) apiErrors.NotFound(appMessageErros.auth.user.notFound);
+	const user = await userRepository.getUserAndAccountByEmail(email);
+
+	if (!user) {
+		apiErrors.NotFound(appMessageErros.auth.user.notFound);
+	};
 
 	if (!(await bcrypt.compare(password, user.password))) {
 		apiErrors.Unauthorized(appMessageErros.auth.user.invalidPassword);
 	}
 
-	const payload = {
-		id: user.id,
-		email: user.email
+	const payload: UserJwtPayload = {
+		userId: user.id,
+		email: user.email,
+		accountId: user.Account.id,
+		profileId: user.Account.profileId
 	};
 
 	return jwt.sign(payload, config.api.env.JWT_SECRET, {

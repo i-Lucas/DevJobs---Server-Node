@@ -5,7 +5,7 @@ import hiringService from '../../services/hiring/hiring.js';
 
 async function applyToProcess(req: Request, res: Response) {
 
-    const { id: userId }: UserJwtPayload = res.locals.user;
+    const { userId }: UserJwtPayload = res.locals.user;
 
     const { candidate, processId } = req.body;
 
@@ -15,7 +15,7 @@ async function applyToProcess(req: Request, res: Response) {
     });
 
     return res.status(response.status).json(response);
-}
+};
 
 const developerHiringController = {
 

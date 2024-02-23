@@ -110,13 +110,6 @@ interface NewHiringProcessResponse {
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-// interface CandidateSubscriber {
-//     userId: string;
-//     name: string;
-//     profileId: string;
-//     picture: string;
-// }
-
 export interface DeveloperApplyToProcessRequest {
 
     processId: string;
@@ -127,4 +120,35 @@ export interface ApplyNewCandidate {
 
     candidate: Omit<HiringDeveloperSubscriber, 'createdAt' | 'updatedAt'>;
     processStepListId: ProcessStepsList['id'];
+}
+
+export interface JobOfferData {
+
+    company: {
+
+        name: string;
+        profile: string;
+        picture: string;
+    },
+
+    offer: {
+
+        id: string;
+        title: string;
+        workload: string; // full-time / meio-período
+        location: string; // localização da vaga ( remota ou localização da empresa )
+
+        seniority: string;
+        category: string;
+        contractType: string;
+        salaryRange: string;
+        description: string;
+        benefits: string[];
+        stacklist: string[];
+        differences: string[];
+        requirements: string[];
+
+        createdAt: string;
+        updatedAt: string;
+    }
 }

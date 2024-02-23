@@ -1,3 +1,5 @@
+import { AccountType } from './account.js';
+
 export interface User {
 
     id: string;
@@ -10,10 +12,23 @@ export interface User {
 
 export interface UserJwtPayload {
 
-    id: string,
-    email: string
+    email: string,
+    userId: string,
+    accountId: string;
+    profileId: string;
 }
 
-export type CreateNewUser = Omit<User, 'id' | 'createdAt' | 'updatedAt'>;
+export interface CreateNewUserAccount {
+
+	user: {
+		email: string;
+		name: string;
+		password: string;
+	}
+	account: {
+		profileId: string
+		accountType: AccountType
+	}
+}
 
 export type SigninUser = Omit<User, 'id' | 'name' | 'createdAt' | 'updatedAt'>;

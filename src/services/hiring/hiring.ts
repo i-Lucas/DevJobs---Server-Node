@@ -1,7 +1,10 @@
 import { ApiResponse } from '../../models/api.js';
 import { UserJwtPayload } from '../../models/user.js';
 
+import { apiErrors, appMessageErros } from '../../errors/index.js';
+
 import {
+
     HiringProcess,
     ProcessStepsList,
     CreateNewProcessData,
@@ -10,61 +13,50 @@ import {
 
 } from '../../models/hiring.js';
 
-import accountService from '../account.js';
 import hiringRepository from '../../repositories/hiring/index.js';
-import { apiErrors, appMessageErros } from '../../errors/index.js';
 
 interface CreateNewProcess {
     user: UserJwtPayload;
     data: Omit<CreateNewProcessData, 'recruiter'>;
 };
 
-async function createProcess({ data, user }: CreateNewProcess) {
-
-    const { accountId } = await accountService.getAccountUserOrThrow(user.id);
+async function createProcess({ data, user: { profileId, email } }: CreateNewProcess) {
 
     const newProcessResponse = await hiringRepository.create.process({
-        accountId,
+        profileId,
         data: {
             ...data,
-            recruiter: user.email
+            recruiter: email
         }
     })
 
     const response: ApiResponse<NewHiringProcessResponse> = {
-        status: 200,
+        status: 201,
+        data: newProcessResponse,
         message: 'Processo seletivo iniciado com sucesso!',
-        data: newProcessResponse
     };
 
     return response;
 };
 
-async function getCompanyHiringProcessList(userId: string): Promise<ApiResponse<any>> {
+async function getCompanyHiringProcessList(userJwtProfileId: string): Promise<ApiResponse<{ processList: HiringProcess[] }>> {
 
-    const { accountId } = await accountService.getAccountUserOrThrow(userId);
-    const processList = await hiringRepository.get.allCompanyProcess(accountId);
+    const processList = await hiringRepository.get.allCompanyProcess(userJwtProfileId);
 
     if (processList.length === 0) {
 
-        const response: ApiResponse<null> = {
+        return {
             status: 200,
             message: 'Nenhum processo seletivo foi encontrado.',
         }
-
-        return response;
     }
 
-    const response: ApiResponse<{ processList: HiringProcess[] }> = {
+    return {
 
         status: 200,
+        data: { processList },
         message: 'Processos seletivos encontrados com sucesso!',
-        data: {
-            processList
-        }
     }
-
-    return response
 }
 
 async function applyToProcess({ candidate, processId }: DeveloperApplyToProcessRequest): Promise<ApiResponse<any>> {
@@ -104,7 +96,7 @@ async function applyToProcess({ candidate, processId }: DeveloperApplyToProcessR
     }
 
     return response;
-}
+};
 
 function checkIfProcessIsApplicableOrThrow(step: Omit<ProcessStepsList, 'candidatesLists'>) {
     checkProcessHasClosed(step);

@@ -4,19 +4,25 @@ import utils from '../../utils/appUtils.js';
 import { CreateNewProcessData, NewHiringProcessResponse, ProcessStepsList } from '../../models/hiring.js';
 
 interface CreateNewProcess {
-    accountId: string;
+    profileId: string;
     data: CreateNewProcessData
 }
 
-async function newHiringProcess({ data, accountId }: CreateNewProcess): Promise<NewHiringProcessResponse> {
+async function newHiringProcess({ data, profileId }: CreateNewProcess): Promise<NewHiringProcessResponse> {
 
     const createdAtAndUpdatedAt = utils.createdAtAndUpdatedAtNow();
+
+    const { id: companyProfileId } = await db.companyProfile.findUnique({
+        where: {
+            id: profileId
+        }
+    })
 
     const { id: hiringProcessId } = await db.hiringProcess.create({
 
         data: {
             ...data,
-            accountId,
+            companyProfileId,
             subscribersCount: 0,
             ...createdAtAndUpdatedAt,
         }

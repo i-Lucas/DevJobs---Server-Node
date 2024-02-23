@@ -2,26 +2,56 @@ import db from '../../config/db.js';
 import appConfig from '../../config/app.js';
 
 import utils from '../../utils/appUtils.js';
-import { CreateNewUser } from '../../models/user.js';
+import { CreateNewUserAccount, User } from '../../models/user.js';
 
-async function createNewUser(data: CreateNewUser) {
+async function createNewUserAccount({ user, account }: CreateNewUserAccount) {
 
 	const createdAtAndUpdatedAt = utils.createdAtAndUpdatedAtNow();
 
+	const picture = appConfig.client.user.default_picture;
+
 	return await db.users.create({
 		data: {
-			...data,
+			...user,
 			...createdAtAndUpdatedAt,
-			photo: appConfig.client.user.default_picture
+			photo: picture,
+			Account: {
+				create: {
+					ownerEmail: user.email,
+					...createdAtAndUpdatedAt,
+					profileId: account.profileId,
+					accountType: account.accountType,
+				},
+			},
 		}
 	});
-}
+};
 
-async function findUserByEmail(email: string) {
+async function getOnlyUserEmail(email: string) {
 
 	return await db.users.findUnique({
 		where: {
 			email
+		},
+		select: {
+			email: true
+		}
+	});
+};
+
+async function getUserAndAccountByEmail(email: string): Promise<User & { Account: { id: string, profileId: string } }> {
+
+	return await db.users.findUnique({
+		where: {
+			email
+		},
+		include: {
+			Account: {
+				select: {
+					id: true,
+					profileId: true
+				}
+			}
 		}
 	});
 }
@@ -36,9 +66,10 @@ async function findUserById(id: string) {
 }
 
 const userRepository = {
-	createNewUser,
-	findUserByEmail,
-	findUserById
+	findUserById,
+	getOnlyUserEmail,
+	createNewUserAccount,
+	getUserAndAccountByEmail,
 };
 
 export default userRepository;

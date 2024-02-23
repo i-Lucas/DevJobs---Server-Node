@@ -23,35 +23,21 @@ model Users {
   email    String @unique
   password String
 
-  accounts AccountUsers[]
+  Account   Account? @relation(fields: [accountId], references: [id])
+  accountId String?
 
   createdAt String
   updatedAt String
-}
-
-model AccountUsers {
-  //
-  id String @id @default(uuid())
-
-  user   Users  @relation(fields: [userId], references: [id])
-  userId String @unique
-
-  account   Account @relation(fields: [accountId], references: [id])
-  accountId String
-
-  createdAt String
-  updatedAt String
-
-  @@unique([userId, accountId])
 }
 
 model Account {
   //
   id String @id @default(uuid())
 
-  profileId String @unique
+  profileId  String @unique
+  ownerEmail String @unique
 
-  users       AccountUsers[]
+  users       Users[]
   accountType AccountType
 
   createdAt String
@@ -66,9 +52,10 @@ model CompanyProfile {
 
   CompanyProfileDetailsModel       CompanyProfileDetailsModel?
   CompanyProfileAddressModel       CompanyProfileAddressModel?
-  CompanyProfileOwnerInfoModel     CompanyProfileOwnerInfoModel?
   CompanyProfileSupportInfoModel   CompanyProfileSupportInfoModel?
   CompanyProfileSocialNetworkModel CompanyProfileSocialNetworkModel?
+
+  HiringProcess HiringProcess[]
 
   createdAt String
   updatedAt String
@@ -88,22 +75,6 @@ model CompanyProfileAddressModel {
   address      String
   complement   String
   neighborhood String
-
-  createdAt String
-  updatedAt String
-}
-
-model CompanyProfileOwnerInfoModel {
-  //
-  id String @id @default(uuid())
-
-  profileId String         @unique
-  profile   CompanyProfile @relation(fields: [profileId], references: [id])
-
-  userId String
-  name   String
-  phone  String
-  email  String
 
   createdAt String
   updatedAt String
@@ -361,7 +332,8 @@ model HiringProcess {
   //
   id String @id @default(uuid())
 
-  accountId String
+  company          CompanyProfile? @relation(fields: [companyProfileId], references: [id])
+  companyProfileId String?
 
   title            String
   description      String

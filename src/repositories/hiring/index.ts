@@ -20,8 +20,14 @@ const hiringRepository = {
     get: {
 
         byId: getHiringProcessPackage.getHiringProcessById,
-        allCompanyProcess: getHiringProcessPackage.getCompanyHiringProcessListByAccountId,
+        allCompanyProcess: getHiringProcessPackage.getCompanyHiringProcessList,
 
+        offers: {
+
+            offerById: getHiringProcessPackage.getCompanyOfferById,
+            allAppOffers: getHiringProcessPackage.getAllAppJobOffers,
+            companyJobOffers: getHiringProcessPackage.getCompanyOffersWithoutSteps,
+        }
     },
 
     delete: {

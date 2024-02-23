@@ -4,14 +4,13 @@ import { ApiResponse } from '../../models/api.js';
 import { apiErrors, appMessageErros } from "../../errors/index.js";
 
 import userRepository from "../../repositories/user/user.js";
-import accountRepository from '../../repositories/account/account.js';
-import accountUserRepository from '../../repositories/account/user.js';
+
 import companyProfileRepository from '../../repositories/profile/company.js';
-import { CreateCompanyAccountRequest, NewCompanyProfile } from "../../models/profile/company.profile.js";
+import { CreateCompanyAccountRequest } from "../../models/profile/company.profile.js";
 
 async function createCompanyAccount(profile: CreateCompanyAccountRequest) {
 
-	const findUser = await userRepository.findUserByEmail(profile.account.email);
+	const findUser = await userRepository.getUserAndAccountByEmail(profile.account.email);
 
 	if (findUser) {
 		apiErrors.Conflict(appMessageErros.auth.user.emailAlreadyUse);
@@ -19,29 +18,25 @@ async function createCompanyAccount(profile: CreateCompanyAccountRequest) {
 
 	const password = await bcrypt.hash(profile.account.password, 10);
 
-	const { id: userId } = await userRepository.createNewUser({
-		name: profile.account.name,
-		email: profile.account.email,
-		password
+	const { id: profileId } = await companyProfileRepository.createCompanyProfile(profile);
+
+	const { id: userId, accountId } = await userRepository.createNewUserAccount({
+		user: {
+			password,
+			name: profile.account.name,
+			email: profile.account.email,
+		},
+		account: {
+			profileId,
+			accountType: 'COMPANY',
+		}
 	});
 
-	const newProfile: NewCompanyProfile = {
-		...profile,
-		userId
-	}
-
-	const { id: profileId } = await companyProfileRepository.createCompanyProfile(newProfile);
-
-	const { id: accountId } = await accountRepository.createAccount({
-		accountType: 'COMPANY', profileId
-	});
-
-	await accountUserRepository.createAccountUser({ accountId, userId });
-
-	const response: ApiResponse<{ profileId: string, accountId: string }> = {
+	const response: ApiResponse<{ userId: string, profileId: string, accountId: string }> = {
 		status: 201,
 		message: 'Conta criada com sucesso!',
 		data: {
+			userId,
 			accountId,
 			profileId
 		}

@@ -1,17 +1,21 @@
-import { apiErrors, appMessageErros } from '../../errors/index.js';
-
 import utils from '../../utils/appUtils.js';
 import { ApiResponse } from '../../models/api.js';
-import companyProfileRepository from '../../repositories/profile/company.js';
+
+import { apiErrors, appMessageErros } from '../../errors/index.js';
 
 import {
+	
 	CompanyProfile,
 	CompanyProfileSocial,
 	CompanyProfileAddress,
 	CompanyProfileSupport,
 	CompanyProfileDetails,
 	CompanyProfileEditFieldsIdentifier,
+
 } from '../../models/profile/company.profile.js';
+
+import companyProfileRepository from '../../repositories/profile/company.js';
+import jobOfferService from '../hiring/offer.js';
 
 async function getCompanyProfile(profileId: string): Promise<CompanyProfile> {
 
@@ -21,16 +25,24 @@ async function getCompanyProfile(profileId: string): Promise<CompanyProfile> {
 		apiErrors.NotFound(appMessageErros.profile.notFound)
 	};
 
+	const companyAccount = await companyProfileRepository.getCompanyAccountIdByProfileId(profileId);
+
+	if (!companyAccount) {
+		apiErrors.NotFound(appMessageErros.account.notFound);
+	};
+
+	const jobOffers = await jobOfferService.getCompanyJobOffersList(profileId);
+
 	return {
 
+		jobOffers,
 		id: profile.id,
 		createdAt: profile.createdAt,
 		updatedAt: profile.updatedAt,
 		address: profile.CompanyProfileAddressModel,
 		details: profile.CompanyProfileDetailsModel,
-		ownerInfo: profile.CompanyProfileOwnerInfoModel,
+		suportInfo: profile.CompanyProfileSupportInfoModel,
 		socialNetwork: profile.CompanyProfileSocialNetworkModel,
-		suportInfo: profile.CompanyProfileSupportInfoModel
 	}
 };
 

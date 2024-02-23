@@ -1,13 +1,13 @@
 import joi from 'joi';
-import { CreateNewUser } from '../models/user.js';
+import { CreateNewUserAccount } from '../models/user.js';
 
-const signup = joi.object<CreateNewUser>({
+const signup = joi.object<CreateNewUserAccount['user']>({
 
 	email: joi.string().email().required(),
 	password: joi.string().min(5).required(),
 });
 
-const signin = joi.object<CreateNewUser>({
+const signin = joi.object<CreateNewUserAccount['user']>({
 
 	email: joi.string().email().required(),
 	password: joi.string().required(),

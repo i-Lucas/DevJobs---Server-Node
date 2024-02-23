@@ -144,12 +144,12 @@ export type CreateNewDeveloperProfileData = Omit<DeveloperProfile, 'id' | 'updat
 
 export interface CreateDeveloperAccountRequest {
 
-    stack: Omit<DeveloperProfileStackList, 'id'>;
-    projects: Omit<DeveloperProfileProjects, 'id'>;
-    languages: Omit<DeveloperProfileLanguages, 'id'>;
-    certificates: Omit<DeveloperProfileCertificates, 'id'>;
-    academic_education: Omit<DeveloperProfileAcademicEducation, 'id'>;
-    professional_experiences: Omit<DeveloperProfileJobExperiences, 'id'>;
+    stack: Omit<DeveloperProfileStackList, 'id'>[];
+    projects: Omit<DeveloperProfileProjects, 'id'>[];
+    languages: Omit<DeveloperProfileLanguages, 'id'>[];
+    certificates: Omit<DeveloperProfileCertificates, 'id'>[];
+    academic_education: Omit<DeveloperProfileAcademicEducation, 'id'>[];
+    professional_experiences: Omit<DeveloperProfileJobExperiences, 'id'>[];
 
     password: { password: string };
     about: Omit<DeveloperProfileAbout, 'id' | 'updatedAt' | 'createdAt'>;
