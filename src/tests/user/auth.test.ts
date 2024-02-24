@@ -1,4 +1,5 @@
 import supertest from 'supertest';
+import CryptoJS from "crypto-js";
 import app from '../../app.js';
 
 import jwt from 'jsonwebtoken';
@@ -8,6 +9,8 @@ import { UserJwtPayload } from '../../models/user.js';
 import { ApiResponse } from '../../models/api.js';
 import mockFunctionsModule from './mock/account.js';
 import { appMessageErros } from '../../errors/index.js';
+
+const decrypt = (token: string) => CryptoJS.AES.decrypt(token, config.api.env.KEY_SECRET).toString(CryptoJS.enc.Utf8);
 
 describe('test battery: AUTHENTICATION', () => {
 
@@ -45,7 +48,9 @@ describe('test battery: AUTHENTICATION', () => {
         expect(responseBody.data.token).not.toBeNull();
         expect(typeof responseBody.data.token).toBe('string');
 
-        const userJwtPayload = jwt.verify(responseBody.data.token, config.api.env.JWT_SECRET) as UserJwtPayload;
+        const decryptedToken = decrypt(responseBody.data.token);
+
+        const userJwtPayload = jwt.verify(decryptedToken, config.api.env.JWT_SECRET) as UserJwtPayload;
         expect(email).toBe(userJwtPayload.email);
     });
 

@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
-
-import { NextFunction, Request, Response } from 'express';
+import CryptoJS from "crypto-js";
 import config from '../config/index.js';
 
 import { apiErrors } from '../errors/index.js';
+import { NextFunction, Request, Response } from 'express';
 
 export async function tokenHandler(req: Request, res: Response, next: NextFunction) {
 
@@ -11,8 +11,15 @@ export async function tokenHandler(req: Request, res: Response, next: NextFuncti
     const token = authorization?.replace('Bearer ', '').trim();
     if (!token) apiErrors.Unauthorized('Token não fornecido');
 
-    const user = jwt.verify(token, config.api.env.JWT_SECRET);
-    res.locals.user = user;
+    try {
 
-    next();
+        const decryptedToken = CryptoJS.AES.decrypt(token, config.api.env.KEY_SECRET).toString(CryptoJS.enc.Utf8);
+        const user = jwt.verify(decryptedToken, config.api.env.JWT_SECRET);
+        res.locals.user = user;
+        next();
+
+    } catch (error) {
+
+        apiErrors.Unauthorized('Token inválido');
+    }
 };

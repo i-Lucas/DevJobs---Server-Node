@@ -1,6 +1,7 @@
 import app from '../../app.js';
 import pkg from '@prisma/client';
 import supertest from 'supertest';
+import CryptoJS from "crypto-js";
 
 import jwt from 'jsonwebtoken';
 import hiringMockModule from './mock/hiring.js';
@@ -13,6 +14,8 @@ import companyMockModule from '../company/mock/company.profile.js';
 
 const { PrismaClient } = pkg;
 const prisma = new PrismaClient();
+
+const decrypt = (token: string) => CryptoJS.AES.decrypt(token, config.api.env.KEY_SECRET).toString(CryptoJS.enc.Utf8);
 
 interface CreateCompanyAccountResponseData {
     profileId: string;
@@ -64,11 +67,12 @@ describe('test battery: HIRING', () => {
         expect(responseBody.data.token).not.toBeNull();
         expect(typeof responseBody.data.token).toBe('string');
 
-        const userJwtPayload = jwt.verify(responseBody.data.token, config.api.env.JWT_SECRET) as UserJwtPayload;
+        const decryptedToken = decrypt(responseBody.data.token);
+
+        const userJwtPayload = jwt.verify(decryptedToken, config.api.env.JWT_SECRET) as UserJwtPayload;
         expect(companyProfile.account.email).toBe(userJwtPayload.email);
 
         token = responseBody.data.token;
-
     });
 
     it('should return an empty list', async () => {

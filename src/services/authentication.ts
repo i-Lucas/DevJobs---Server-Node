@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import CryptoJS from "crypto-js";
 
 import config from '../config/index.js';
 
@@ -8,7 +9,7 @@ import userRepository from '../repositories/user/user.js';
 
 import { apiErrors, appMessageErros } from '../errors/index.js';
 
-async function signin({ email, password }: SigninUser) {
+async function signin({ email, password }: SigninUser): Promise<string> {
 
 	const user = await userRepository.getUserAndAccountByEmail(email);
 
@@ -27,11 +28,13 @@ async function signin({ email, password }: SigninUser) {
 		profileId: user.Account.profileId
 	};
 
-	return jwt.sign(payload, config.api.env.JWT_SECRET, {
+	const token = jwt.sign(payload, config.api.env.JWT_SECRET, {
 		expiresIn: config.auth.token.expiration
-	})
+	});
+
+	return CryptoJS.AES.encrypt(token, config.api.env.KEY_SECRET).toString();
 };
 
 export const authService = {
-	signin
+	signin,
 };

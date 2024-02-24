@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 
-import { config } from 'dotenv';
-config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 import prisma from '../src/config/db.js';
 
@@ -87,7 +87,7 @@ async function main() {
         await clearDB();
 
         info('Criando conta do tipo [COMPANY] ...');
-        const { data: { accountId: companyAccountId, profileId: companyProfileId } } = await createCompanyAccount('Lucas Oliveira', 'lucas@company.com.br');
+        const { data: { accountId: companyAccountId, profileId: companyProfileId } } = await createCompanyAccount('Lucas Oliveira', 'lucas@company.com');
         success('Conta do tipo [COMPANY] criada com sucesso');
 
         warning('Conta criada: ' + companyAccountId);

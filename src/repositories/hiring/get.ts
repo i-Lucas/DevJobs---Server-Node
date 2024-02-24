@@ -48,7 +48,12 @@ async function getCompanyOffersWithoutSteps(companyProfileId: string) {
 
     return await db.hiringProcess.findMany({
         where: {
-            companyProfileId
+            steps: {
+                every: {
+                    identifier: 'OPEN_FOR_APPLICATIONS'
+                }
+            },
+            companyProfileId,
         },
         include: {
             company: {
