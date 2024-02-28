@@ -3,7 +3,7 @@ import developerAccountService from '../../services/developer/account.js';
 
 async function createDeveloperAccount(req: Request, res: Response) {
 
-	// await new Promise((resolve) => setTimeout(resolve, 2500));
+	// await new Promise((resolve) => setTimeout(resolve, 3500));
 
 	const response = await developerAccountService.createDeveloperAccount(req.body);
 

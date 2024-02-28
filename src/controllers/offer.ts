@@ -7,7 +7,7 @@ async function getJobOfferById(req: Request, res: Response) {
 
     const { offerId } = req.params;
 
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    await new Promise((resolve) => setTimeout(resolve, 2300));
 
     const response = await jobOfferService.getJobOfferById(offerId);
 

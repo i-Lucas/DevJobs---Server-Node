@@ -5,6 +5,7 @@ import { apiErrors, appMessageErros } from "../../errors/index.js";
 
 import userRepository from "../../repositories/user/user.js";
 
+import messageService from '../messages.js';
 import developerProfileRepository from '../../repositories/profile/developer/index.js';
 import { CreateDeveloperAccountRequest } from "../../models/profile/candidate.profile.js";
 
@@ -30,6 +31,12 @@ async function createDeveloperAccount(profile: CreateDeveloperAccountRequest) {
 			profileId,
 			accountType: 'CANDIDATE',
 		}
+	});
+
+	await messageService.sendWelcomeMessage({
+		accountType: 'CANDIDATE',
+		receiverAccountId: accountId,
+		receiverEmail: profile.contact.email
 	});
 
 	const response: ApiResponse<{ userId: string, profileId: string, accountId: string }> = {

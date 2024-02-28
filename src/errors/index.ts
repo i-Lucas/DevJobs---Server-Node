@@ -10,9 +10,9 @@ import {
 
 } from './account.js';
 
-import { ProfiletMessageErrors, profileMessageErrors } from './profile.js';
-
 import { HiringMessageErrors, hiringMessageErrors } from './hiring.js';
+import { ProfiletMessageErrors, profileMessageErrors } from './profile.js';
+import { NotificationsMessageErrors, notificationsMessageErrors } from './notifications.js';
 
 interface ApiError {
 
@@ -48,6 +48,7 @@ interface AppMessageErrors {
     account: AccountMessageErrors,
     profile: ProfiletMessageErrors,
     accountUser: AccountUserMessageErrors,
+    notifications: NotificationsMessageErrors
 }
 
 export const appMessageErros: AppMessageErrors = {
@@ -58,4 +59,5 @@ export const appMessageErros: AppMessageErrors = {
     account: accountMessageErrors,
     profile: profileMessageErrors,
     accountUser: accountUserMessageErrors,
+    notifications: notificationsMessageErrors
 };

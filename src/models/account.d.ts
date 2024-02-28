@@ -1,4 +1,6 @@
 import { User } from "./user.js";
+
+import { NotificationsResponse } from "./messages.js";
 import { AccountProfile } from "./profile/profile.js";
 
 export type AccountType = 'ADMIN' | 'COMPANY' | 'CANDIDATE';
@@ -32,6 +34,7 @@ export type CreateNewUserAccountData = Omit<UserAccount, 'id' | 'updatedAt' | 'c
 export interface GetAccountDataResponse {
 
     account: Account;
-    profile: AccountProfile
-    user: Omit<User, 'password'>
+    profile: AccountProfile;
+    user: Omit<User, 'password'>;
+    notifications: NotificationsResponse;
 }

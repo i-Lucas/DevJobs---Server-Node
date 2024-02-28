@@ -37,7 +37,9 @@ model Account {
   profileId  String @unique
   ownerEmail String @unique
 
-  users       Users[]
+  users    Users[]
+  Messages Message[]
+
   accountType AccountType
 
   createdAt String
@@ -399,6 +401,55 @@ model HiringDeveloperSubscriber {
 
   ProcessStepList   ProcessStepList? @relation(fields: [processStepListId], references: [id])
   processStepListId String?
+
+  createdAt String
+  updatedAt String
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+enum MessageProvider {
+  ADMIN
+  COMPANY
+  CANDIDATE
+  DEVJOBS
+}
+
+enum MessageSeverity {
+  INFO
+  WARN
+  SUCCESS
+  ERROR
+  NORMAL
+}
+
+enum MessageCategory {
+  READ
+  NEWS
+  TRASH
+  UPDATES
+  WARNINGS
+  FAVORITES
+}
+
+model Message {
+  // 
+  id String @id @default(uuid())
+
+  bodyHTML String
+  subject  String
+
+  senderEmail   String
+  receiverEmail String
+
+  receiverAccountId String
+  account           Account @relation(fields: [receiverAccountId], references: [id])
+
+  category MessageCategory
+  severity MessageSeverity
+  provider MessageProvider
+
+  unread Boolean
 
   createdAt String
   updatedAt String

@@ -88,7 +88,7 @@ async function main() {
 
         info('Criando conta do tipo [COMPANY] ...');
         const { data: { accountId: companyAccountId, profileId: companyProfileId } } = await createCompanyAccount('Lucas Oliveira', 'lucas@company.com');
-        success('Conta do tipo [COMPANY] criada com sucesso');
+        success('Conta do tipo [COMPANY] criada com sucesso');        
 
         warning('Conta criada: ' + companyAccountId);
         warning('Perfil criado: ' + companyProfileId);

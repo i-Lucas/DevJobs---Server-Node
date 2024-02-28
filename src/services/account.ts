@@ -8,6 +8,7 @@ import accountRepository from '../repositories/account/account.js';
 // import accountUserRepository from '../repositories/account/user.js';
 import { Account, GetAccountDataResponse } from '../models/account.js';
 import { UserJwtPayload } from '../models/user.js';
+import messageService from './messages.js';
 
 /*
 async function getAccountUserOrThrow(userId: string) {
@@ -74,11 +75,14 @@ async function getAccountData({ accountId, profileId, userId }: Omit<UserJwtPayl
 		apiErrors.NotFound(appMessageErros.profile.notFound);
 	}
 
-	delete user.password
+	delete user.password;
+
+	const { data: notifications } = await messageService.getAllUserMessages(accountId);
 
 	const response: ApiResponse<GetAccountDataResponse> = {
 		status: 200, message: 'Dados da conta obtidos com sucesso!',
 		data: {
+			notifications,
 			account,
 			profile,
 			user

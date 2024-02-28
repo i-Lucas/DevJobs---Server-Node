@@ -7,7 +7,7 @@ async function getAccountData(req: Request, res: Response) {
 
 	const { userId, profileId, accountId }: UserJwtPayload = res.locals.user;
 
-	// await new Promise((resolve) => setTimeout(resolve, 2500));
+	// await new Promise((resolve) => setTimeout(resolve, 5200));
 
 	const response = await accountService.getAccountData({ userId, profileId, accountId });
 
