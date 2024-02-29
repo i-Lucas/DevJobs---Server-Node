@@ -54,8 +54,19 @@ async function addDeveloperProfileField(req: Request, res: Response) {
     return res.status(response.status).json(response);
 }
 
+async function getDeveloperTalents(req: Request, res: Response) {
+
+    // await new Promise((resolve) => setTimeout(resolve, 3500));
+
+    const response = await developerProfileService.getTalentsList();
+
+    return res.status(response.status).json(response);
+}
+
+
 const developerProfileController = {
     getDeveloperProfile,
+    getDeveloperTalents,
     updateDeveloperProfile,
     addDeveloperProfileField,
     deleteDeveloperProfileField,

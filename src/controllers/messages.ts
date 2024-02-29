@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import { UserJwtPayload } from '../models/user.js';
-import messageService from '../services/messages.js';
+import messageService from '../services/messages/messages.js';
 
 async function restoreMessage(req: Request, res: Response) {
 

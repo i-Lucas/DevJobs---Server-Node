@@ -6,6 +6,7 @@ import developerProfileRepository from '../../repositories/profile/developer/ind
 
 import {
 
+	TalentResponse,
 	DeveloperProfile,
 	DeveloperProfileAbout,
 	DeveloperProfileContact,
@@ -19,6 +20,33 @@ import {
 	DeveloperProfileEditFieldsIdentifier,
 
 } from "../../models/profile/candidate.profile.js";
+
+async function getTalentsList(): Promise<ApiResponse<TalentResponse[]>> {
+
+	const talents = await developerProfileRepository.get.talents();
+
+	const formatTalents: TalentResponse[] = talents.map(talent => {
+
+		const { city, state } = talent.CandidateProfileAddressModel;
+		const { name, occupation, picture, resume } = talent.CandidateProfileAboutModel;
+
+		const stacklist = talent.CandidateProfileStackListModel.map(stack => stack.name);
+		const languages = talent.CandidateProfileLanguagesModel.map(lang => lang.language);
+
+		return {
+			name,
+			picture,
+			languages,
+			stacklist,
+			occupation,
+			id: talent.id,
+			about: resume,
+			location: city.concat(' - ').concat(state),
+		}
+	})
+
+	return getResponse<TalentResponse[]>('Talentos encontrados com sucesso !', 200, formatTalents);
+}
 
 async function getDeveloperProfile(profileId: string): Promise<DeveloperProfile> {
 
@@ -184,6 +212,7 @@ function getResponse<T>(message: string, status: number, data?: T) {
 
 const developerProfileService = {
 
+	getTalentsList,
 	getDeveloperProfile,
 	updateDeveloperProfile,
 	addDeveloperProfileField,

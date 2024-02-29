@@ -18,7 +18,7 @@ export interface DeveloperProfile {
 }
 
 export interface DeveloperProfileAddress {
-    
+
     id?: string;
 
     cep: string;
@@ -191,3 +191,15 @@ type DeveloperProfileEditFieldsIdentifier =
     'DEVELOPER_STACKLIST' |
     'DEVELOPER_EXPERIENCES' |
     'DEVELOPER_CERTIFICATES'
+
+export interface TalentResponse {
+
+    id: string;
+    name: string;
+    about: string;
+    picture: string;
+    location: string;
+    occupation: string;
+    stacklist: string[]
+    languages: string[]
+}

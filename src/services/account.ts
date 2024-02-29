@@ -8,7 +8,7 @@ import accountRepository from '../repositories/account/account.js';
 // import accountUserRepository from '../repositories/account/user.js';
 import { Account, GetAccountDataResponse } from '../models/account.js';
 import { UserJwtPayload } from '../models/user.js';
-import messageService from './messages.js';
+import messageService from './messages/messages.js';
 
 /*
 async function getAccountUserOrThrow(userId: string) {

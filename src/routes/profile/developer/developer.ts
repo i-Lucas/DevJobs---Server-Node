@@ -13,4 +13,6 @@ developerRouter.post('/profile/developer/delete', tokenHandler, developerProfile
 
 developerRouter.post('/profile/developer/add', tokenHandler, developerProfileController.addDeveloperProfileField);
 
+developerRouter.get('/profile/developer/talents', tokenHandler, developerProfileController.getDeveloperTalents);
+
 export default developerRouter;

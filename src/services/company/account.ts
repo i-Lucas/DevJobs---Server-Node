@@ -5,7 +5,7 @@ import { apiErrors, appMessageErros } from "../../errors/index.js";
 
 import userRepository from "../../repositories/user/user.js";
 
-import messageService from '../messages.js';
+import messageService from '../messages/messages.js';
 import companyProfileRepository from '../../repositories/profile/company.js';
 import { CreateCompanyAccountRequest } from "../../models/profile/company.profile.js";
 
@@ -33,14 +33,12 @@ async function createCompanyAccount(profile: CreateCompanyAccountRequest) {
 		}
 	});
 
-	for (let i = 0; i < 5; i++) {
-		await messageService.sendWelcomeMessage({
-			accountType: 'COMPANY',
-			receiverAccountId: accountId,
-			receiverEmail: profile.account.email
-		});
-	}
-
+	await messageService.sendWelcomeMessage({
+		accountType: 'COMPANY',
+		receiverAccountId: accountId,
+		receiverName: profile.account.name,
+		receiverEmail: profile.account.email,
+	});
 
 	const response: ApiResponse<{ userId: string, profileId: string, accountId: string }> = {
 		status: 201,

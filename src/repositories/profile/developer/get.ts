@@ -46,8 +46,41 @@ async function getDeveloperProfile(profileId: string) {
     })
 };
 
+async function getCandidatesListAsTalent() {
+
+    return await db.candidateProfile.findMany({
+        include: {
+            CandidateProfileAboutModel: {
+                select: {
+                    name: true,
+                    resume: true,
+                    picture: true,
+                    occupation: true,
+                },
+            },
+            CandidateProfileAddressModel: {
+                select: {
+                    city: true,
+                    state: true
+                }
+            },
+            CandidateProfileStackListModel: {
+                select: {
+                    name: true
+                }
+            },
+            CandidateProfileLanguagesModel: {
+                select: {
+                    language: true
+                }
+            }
+        }
+    });
+}
+
 const getDeveloperProfilePackage = {
-    getDeveloperProfile
+    getDeveloperProfile,
+    getCandidatesListAsTalent
 }
 
 export default getDeveloperProfilePackage

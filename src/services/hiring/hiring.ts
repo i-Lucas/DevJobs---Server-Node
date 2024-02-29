@@ -13,6 +13,8 @@ import {
 
 } from '../../models/hiring.js';
 
+import messageService from '../messages/messages.js';
+import messageBodyHTMLService from '../messages/html.js';
 import hiringRepository from '../../repositories/hiring/index.js';
 
 interface CreateNewProcess {
@@ -20,7 +22,7 @@ interface CreateNewProcess {
     data: Omit<CreateNewProcessData, 'recruiter'>;
 };
 
-async function createProcess({ data, user: { profileId, email } }: CreateNewProcess) {
+async function createProcess({ data, user: { profileId, email, accountId } }: CreateNewProcess) {
 
     const newProcessResponse = await hiringRepository.create.process({
         profileId,
@@ -28,6 +30,22 @@ async function createProcess({ data, user: { profileId, email } }: CreateNewProc
             ...data,
             recruiter: email
         }
+    });
+
+    const bodyHTML = messageBodyHTMLService.newHiringProcessMessage({
+        title: data.title,
+        seniority: data.seniority
+    })
+
+    await messageService.sendNewMessage({
+        bodyHTML,
+        severity: 'INFO',
+        category: 'UPDATES',
+        provider: 'DEVJOBS',
+        receiverEmail: email,
+        senderEmail: 'DevJobs',
+        receiverAccountId: accountId,
+        subject: 'Novo processo seletivo iniciado',
     })
 
     const response: ApiResponse<NewHiringProcessResponse> = {

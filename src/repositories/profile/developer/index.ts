@@ -29,7 +29,8 @@ const developerProfileRepository = {
 
     get: {
 
-        profile: getDeveloperProfilePackage.getDeveloperProfile
+        profile: getDeveloperProfilePackage.getDeveloperProfile,
+        talents: getDeveloperProfilePackage.getCandidatesListAsTalent
     },
 
     update: {

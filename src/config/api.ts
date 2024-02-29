@@ -10,7 +10,7 @@ const apiConfig: ApiConfig = {
 
 	requests: {
 		timeIntervalMinutes: minutes * 60 * 1000,
-		maxRequests: 100
+		maxRequests: 500
 	},
 
 	env: {

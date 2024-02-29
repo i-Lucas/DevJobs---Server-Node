@@ -4,13 +4,14 @@ import utils from "../../utils/appUtils.js";
 
 import { Message } from '../../models/messages.js';
 
-async function createNewMessage(data: Omit<Message, 'id' | 'createdAt' | 'updatedAt'>) {
+async function createNewMessage(data: Omit<Message, 'id'  | 'unread' | 'createdAt' | 'updatedAt'>) {
 
     const createdAtAndUpdatedAt = utils.createdAtAndUpdatedAtNow();
 
     return await db.message.create({
         data: {
             ...data,
+            unread: true,
             ...createdAtAndUpdatedAt,
         }
     })

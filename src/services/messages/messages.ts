@@ -1,11 +1,13 @@
-import { ApiResponse } from '../models/api.js';
-import { AccountType } from '../models/account.js';
-import { Message, NotificationsResponse } from '../models/messages.js';
+import { ApiResponse } from '../../models/api.js';
+import { AccountType } from '../../models/account.js';
+import { Message, NotificationsResponse } from '../../models/messages.js';
 
-import { apiErrors, appMessageErros } from '../errors/index.js';
-import messagesRepository from '../repositories/messages/messages.js';
+import { apiErrors, appMessageErros } from '../../errors/index.js';
+import messagesRepository from '../../repositories/messages/messages.js';
+import messageBodyHTMLService from './html.js';
 
 interface SendWelcomeMessage {
+    receiverName: string;
     receiverEmail: string;
     accountType: AccountType;
     receiverAccountId: string;
@@ -119,7 +121,7 @@ async function markAsRead(_messageId: string): Promise<ApiResponse<{ messageId: 
     return response
 }
 
-async function sendNewMessage(message: Omit<Message, 'id' | 'createdAt' | 'updatedAt'>): Promise<ApiResponse<{ messageId: string }>> {
+async function sendNewMessage(message: Omit<Message, 'id' | 'unread' | 'createdAt' | 'updatedAt'>): Promise<ApiResponse<{ messageId: string }>> {
 
     const { id: messageId } = await messagesRepository.createNewMessage(message);
 
@@ -170,43 +172,13 @@ async function getAllUserMessages(userAccountId: string): Promise<ApiResponse<No
     return response
 };
 
-async function sendWelcomeMessage({ accountType, receiverAccountId, receiverEmail }: SendWelcomeMessage) {
+async function sendWelcomeMessage({ accountType, receiverAccountId, receiverEmail, receiverName }: SendWelcomeMessage) {
 
-    let welcomeMessage: string;
-
-    if (accountType === 'CANDIDATE') {
-
-        welcomeMessage = `
-            <div>
-                <h1>Bem-vindo(a) ao DevJobs!</h1>
-                <p>Você acaba de entrar para a maior plataforma de recrutamento e gerenciamento de processos seletivos do Brasil!</p>
-                <p>Aqui, conectamos talentos como você às melhores oportunidades de emprego na área do desenvolvimento.</p>                                
-                <p>Além disso, oferecemos ferramentas poderosas para acompanhar suas candidaturas e simplificar seu processo de busca por emprego.</p>
-                <p>Fique atento(a) às novidades e oportunidades que compartilhamos diariamente.</p>
-                <p>Seja bem-vindo(a) e boa sorte em sua jornada conosco!</p>
-                <p>Atenciosamente, DevJobs</p>
-            </div>
-        `;
-
-    } else {
-
-        welcomeMessage = `
-            <div>
-                <h1>Bem-vindo(a) ao DevJobs!</h1>
-                <p>Sua empresa agora faz parte da maior plataforma de recrutamento e gerenciamento de processos seletivos do Brasil!</p>
-                <p>Aqui, oferecemos um conjunto abrangente de ferramentas para otimizar seu processo de contratação.</p>
-                <p>Com nossas ferramentas avançadas de gerenciamento de candidatos, você pode facilmente acompanhar o progresso das suas vagas e gerenciar os candidatos de forma intuitiva e eficiente.</p>
-                <p>Além disso, fornecemos insights valiosos por meio de estatísticas detalhadas, permitindo que você tome decisões informadas ao encontrar os melhores talentos para suas vagas.</p>
-                <p>Acompanhe as estatísticas da sua empresa, encontre os melhores candidatos para suas vagas e simplifique seu processo seletivo conosco!</p>
-                <p>Fique atento(a) às novidades e recursos que disponibilizamos para otimizar seu processo de contratação.</p>
-                <p>Seja bem-vindo(a) e aproveite ao máximo sua experiência conosco!</p>
-                <p>Atenciosamente, DevJobs</p>
-            </div>
-        `;
-    }
+    const welcomeMessage = accountType === 'CANDIDATE' ?
+        messageBodyHTMLService.welcomeMessageForDeveloper(receiverName) :
+        messageBodyHTMLService.welcomeMessageForCompany(receiverName);
 
     await messagesRepository.createNewMessage({
-        unread: true,
         receiverEmail,
         category: 'NEWS',
         receiverAccountId,
