@@ -46,6 +46,53 @@ async function getDeveloperProfile(profileId: string) {
     })
 };
 
+async function getCandidatesListAsTalentByPagination(startIndex: number, pageSize: number) {
+
+    const count = await db.candidateProfile.count(); 
+
+    const talents =  await db.candidateProfile.findMany({
+
+        skip: startIndex,
+        take: pageSize,
+
+        include: {
+            CandidateProfileAboutModel: {
+                select: {
+                    name: true,
+                    resume: true,
+                    picture: true,
+                    occupation: true,
+                },
+            },
+            CandidateProfileAddressModel: {
+                select: {
+                    city: true,
+                    state: true
+                }
+            },
+            CandidateProfileStackListModel: {
+                select: {
+                    name: true
+                }
+            },
+            CandidateProfileLanguagesModel: {
+                select: {
+                    language: true
+                }
+            },
+        },
+        orderBy: {
+            createdAt: 'asc'
+        },
+    });
+
+
+    return {
+        talents,
+        count
+    }
+}
+
 async function getCandidatesListAsTalent() {
 
     return await db.candidateProfile.findMany({
@@ -80,7 +127,8 @@ async function getCandidatesListAsTalent() {
 
 const getDeveloperProfilePackage = {
     getDeveloperProfile,
-    getCandidatesListAsTalent
+    getCandidatesListAsTalent,
+    getCandidatesListAsTalentByPagination
 }
 
 export default getDeveloperProfilePackage

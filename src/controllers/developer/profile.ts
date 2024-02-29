@@ -56,13 +56,16 @@ async function addDeveloperProfileField(req: Request, res: Response) {
 
 async function getDeveloperTalents(req: Request, res: Response) {
 
-    // await new Promise((resolve) => setTimeout(resolve, 3500));
+    await new Promise((resolve) => setTimeout(resolve, 850));
 
-    const response = await developerProfileService.getTalentsList();
+    const page = parseInt(req.query.page as string) || 1;
+    const pageSize = parseInt(req.query.pageSize as string) || 10;
 
+    const startIndex = (page - 1) * pageSize;
+
+    const response = await developerProfileService.getTalentsByPagination(startIndex, pageSize);
     return res.status(response.status).json(response);
 }
-
 
 const developerProfileController = {
     getDeveloperProfile,

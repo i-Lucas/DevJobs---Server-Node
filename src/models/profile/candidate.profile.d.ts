@@ -192,7 +192,8 @@ type DeveloperProfileEditFieldsIdentifier =
     'DEVELOPER_EXPERIENCES' |
     'DEVELOPER_CERTIFICATES'
 
-export interface TalentResponse {
+
+export interface Talent {
 
     id: string;
     name: string;
@@ -202,4 +203,10 @@ export interface TalentResponse {
     occupation: string;
     stacklist: string[]
     languages: string[]
+}
+
+export interface TalentResponse {
+
+    count: number;
+    talents: Talent[];
 }

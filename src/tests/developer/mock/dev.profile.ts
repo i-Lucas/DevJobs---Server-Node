@@ -292,19 +292,19 @@ function getDeveloperProfile(name: string, email: string, _password: string = '1
 
     const about = {
 
-        age: '27',
         name,
+        age: '27',
         picture:'',
-        occupation: 'Desenvolvedor, eu acho',
-        resume: 'Alguma coisa bem impactante aqui, para alguém se interessar pelo meu perfil'
+        occupation: 'Desenvolvedor Web',
+        resume: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Magnam sed delectus dignissimos ipsa. A amet sunt, minus delectus iusto voluptatum ea cumque est quidem sequi itaque! Facere maiores doloribus totam.'
     }
 
     const contact = {
 
-        github: 'https://www.google.com/',
-        linkedin: 'https://www.google.com/',
         email,
         phone: '00000000000',
+        github: 'https://www.google.com/',
+        linkedin: 'https://www.google.com/',
     }
 
     return {

@@ -21,6 +21,34 @@ import {
 
 } from "../../models/profile/candidate.profile.js";
 
+async function getTalentsByPagination(startIndex: number, pageSize: number) {
+
+	const { talents, count } = await developerProfileRepository.get.talentsByPagination(startIndex, pageSize);
+
+	const formatTalents: TalentResponse['talents'] = talents.map(talent => {
+
+		const { city, state } = talent.CandidateProfileAddressModel;
+		const { name, occupation, picture, resume } = talent.CandidateProfileAboutModel;
+
+		const stacklist = talent.CandidateProfileStackListModel.map(stack => stack.name);
+		const languages = talent.CandidateProfileLanguagesModel.map(lang => lang.language);
+
+		return {
+			name,
+			picture,
+			languages,
+			stacklist,
+			occupation,
+			id: talent.id,
+			about: resume,
+			location: city.concat(' - ').concat(state),
+		}
+	})
+
+	return getResponse<TalentResponse>('Talentos encontrados com sucesso !', 200, { talents: formatTalents, count });
+}
+
+/*
 async function getTalentsList(): Promise<ApiResponse<TalentResponse[]>> {
 
 	const talents = await developerProfileRepository.get.talents();
@@ -47,6 +75,7 @@ async function getTalentsList(): Promise<ApiResponse<TalentResponse[]>> {
 
 	return getResponse<TalentResponse[]>('Talentos encontrados com sucesso !', 200, formatTalents);
 }
+*/
 
 async function getDeveloperProfile(profileId: string): Promise<DeveloperProfile> {
 
@@ -212,8 +241,9 @@ function getResponse<T>(message: string, status: number, data?: T) {
 
 const developerProfileService = {
 
-	getTalentsList,
+	// getTalentsList,
 	getDeveloperProfile,
+	getTalentsByPagination,
 	updateDeveloperProfile,
 	addDeveloperProfileField,
 	deleteDeveloperProfileField,

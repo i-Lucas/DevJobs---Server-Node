@@ -76,6 +76,31 @@ async function createDeveloperAccount(name: string, email: string) {
     }
 }
 
+async function seedAccounts() {
+
+    const accountsToCreate = 100;
+    const devEmailPrefix = 'dev';
+    const companyEmailPrefix = 'company';
+
+    for (let i = 1; i <= accountsToCreate; i++) {
+
+        const email = `${companyEmailPrefix}${i}@company.com`;
+        const { data: { accountId: companyAccountId, profileId: companyProfileId } } = await createCompanyAccount(`Lucas Oliveira ${i}`, email);
+        console.log(`Conta do tipo [COMPANY] criada com sucesso - Email: ${email}`);
+        console.log('Conta criada:', companyAccountId);
+        console.log('Perfil criado:', companyProfileId);
+    }
+
+    for (let i = 1; i <= accountsToCreate; i++) {
+
+        const email = `${devEmailPrefix}${i}@dev.com`;
+        const { data: { accountId: devAccountId, profileId: devProfileId } } = await createDeveloperAccount(`Lucas Oliveira ${i}`, email);
+        console.log(`Conta do tipo [DEVELOPER] criada com sucesso - Email: ${email}`);
+        console.log('Conta criada:', devAccountId);
+        console.log('Perfil criado:', devProfileId);
+    }
+}
+
 async function main() {
 
     if (ENVIRONMENT === 'TEST') {
@@ -85,7 +110,9 @@ async function main() {
     } else {
 
         await clearDB();
+        await seedAccounts();
 
+        /*
         info('Criando conta do tipo [COMPANY] ...');
         const { data: { accountId: companyAccountId, profileId: companyProfileId } } = await createCompanyAccount('Lucas Oliveira', 'lucas@company.com');
         success('Conta do tipo [COMPANY] criada com sucesso');        
@@ -99,6 +126,7 @@ async function main() {
 
         warning('Conta criada: ' + devAccountId);
         warning('Perfil criado: ' + devProfileId);
+        */
     }
 
 };
