@@ -86,7 +86,6 @@ async function getCandidatesListAsTalentByPagination(startIndex: number, pageSiz
         },
     });
 
-
     return {
         talents,
         count

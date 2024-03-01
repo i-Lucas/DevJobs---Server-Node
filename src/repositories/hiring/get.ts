@@ -144,15 +144,56 @@ async function getAllAppJobOffers() {
                 }
             }
         }
-
-        // include: {
-        //     steps: {
-        //         where: {
-        //             identifier: 'OPEN_FOR_APPLICATIONS'
-        //         }
-        //     },
-        // },
     });
+}
+
+async function getAllAppJobOffersByPagination(startIndex: number, pageSize: number) {
+
+    const count = await db.candidateProfile.count();
+
+    const offers = await db.hiringProcess.findMany({
+
+        skip: startIndex,
+        take: pageSize,
+
+        where: {
+            steps: {
+                every: {
+                    identifier: 'OPEN_FOR_APPLICATIONS'
+                }
+            },
+        },
+        include: {
+            company: {
+                select: {
+                    CompanyProfileAddressModel: {
+                        select: {
+                            city: true,
+                            state: true,
+                        }
+                    },
+                    CompanyProfileDetailsModel: {
+                        select: {
+                            fantasy_name: true
+                        }
+                    },
+                    CompanyProfileSocialNetworkModel: {
+                        select: {
+                            picture: true
+                        }
+                    }
+                }
+            }
+        },
+        orderBy: {
+            createdAt: 'asc'
+        }
+    });
+
+    return {
+        offers,
+        count
+    }
 }
 
 const getHiringProcessPackage = {
@@ -161,6 +202,7 @@ const getHiringProcessPackage = {
     getHiringProcessById,
     getCompanyHiringProcessList,
     getCompanyOffersWithoutSteps,
+    getAllAppJobOffersByPagination,
 }
 
 export default getHiringProcessPackage;

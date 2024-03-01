@@ -27,6 +27,7 @@ const hiringRepository = {
             offerById: getHiringProcessPackage.getCompanyOfferById,
             allAppOffers: getHiringProcessPackage.getAllAppJobOffers,
             companyJobOffers: getHiringProcessPackage.getCompanyOffersWithoutSteps,
+            offersByPagination: getHiringProcessPackage.getAllAppJobOffersByPagination,
         }
     },
 

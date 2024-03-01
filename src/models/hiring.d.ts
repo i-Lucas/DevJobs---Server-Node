@@ -152,3 +152,9 @@ export interface JobOfferData {
         updatedAt: string;
     }
 }
+
+export interface JobOfferResponse {
+
+    count: number;
+    offers: JobOfferData[],
+}

@@ -1,14 +1,14 @@
 import { ApiResponse } from '../../models/api.js';
 
-import { JobOfferData } from '../../models/hiring.js';
+import { JobOfferData, JobOfferResponse } from '../../models/hiring.js';
 
 import { apiErrors, appMessageErros } from '../../errors/index.js';
 
 import hiringRepository from '../../repositories/hiring/index.js';
 
-async function getAllOffers(): Promise<ApiResponse<JobOfferData[]>> {
+async function getAllOffersByPagination(startIndex: number, pageSize: number): Promise<ApiResponse<JobOfferResponse>> {
 
-    const offers = await hiringRepository.get.offers.allAppOffers();
+    const { offers, count } = await hiringRepository.get.offers.offersByPagination(startIndex, pageSize);
 
     if (offers.length === 0) {
 
@@ -21,8 +21,11 @@ async function getAllOffers(): Promise<ApiResponse<JobOfferData[]>> {
 
     const formatedOffers = getFormattedOffers(offers);
 
-    const response: ApiResponse<JobOfferData[]> = {
-        data: formatedOffers,
+    const response: ApiResponse<JobOfferResponse> = {
+        data: {
+            count,
+            offers: formatedOffers,
+        },
         status: 200,
         message: 'Vagas encontradas com sucesso !',
     };
@@ -109,9 +112,9 @@ function getFormattedOffers(offers: any[]): JobOfferData[] {
 }
 
 const jobOfferService = {
-    getAllOffers,
     getJobOfferById,
-    getCompanyJobOffersList
+    getCompanyJobOffersList,
+    getAllOffersByPagination,
 }
 
 export default jobOfferService;

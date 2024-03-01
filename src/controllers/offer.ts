@@ -7,7 +7,7 @@ async function getJobOfferById(req: Request, res: Response) {
 
     const { offerId } = req.params;
 
-    // await new Promise((resolve) => setTimeout(resolve, 2300));
+    await new Promise((resolve) => setTimeout(resolve, 2300));
 
     const response = await jobOfferService.getJobOfferById(offerId);
 
@@ -18,7 +18,14 @@ async function getAllOffers(req: Request, res: Response) {
     
     // const { userId }: UserJwtPayload = res.locals.user;
 
-    const response = await jobOfferService.getAllOffers();
+    await new Promise((resolve) => setTimeout(resolve, 850));
+
+    const page = parseInt(req.query.page as string) || 1;
+    const pageSize = parseInt(req.query.pageSize as string) || 10;
+
+    const startIndex = (page - 1) * pageSize;
+
+    const response = await jobOfferService.getAllOffersByPagination(startIndex, pageSize);
 
     return res.status(response.status).json(response);
 }

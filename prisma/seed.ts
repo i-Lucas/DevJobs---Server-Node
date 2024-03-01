@@ -5,12 +5,14 @@ dotenv.config();
 
 import prisma from '../src/config/db.js';
 
-import companyAccountService from '../src/services/company/account.js';
-
+import hiringMockModule from '../src/tests/hiring/mock/hiring.js';
 import companyMockModule from '../src/tests/company/mock/company.profile.js';
 import developerMockModule from '../src/tests/developer/mock/dev.profile.js';
 
+import hiringService from '../src/services/hiring/hiring.js';
+import companyAccountService from '../src/services/company/account.js';
 import developerAccountService from '../src/services/developer/account.js';
+
 import { CreateCompanyAccountRequest } from '../src/models/profile/company.profile.js';
 import { CreateDeveloperAccountRequest } from '../src/models/profile/candidate.profile.js';
 
@@ -78,17 +80,45 @@ async function createDeveloperAccount(name: string, email: string) {
 
 async function seedAccounts() {
 
-    const accountsToCreate = 100;
+    const accountsToCreate = 150;
     const devEmailPrefix = 'dev';
     const companyEmailPrefix = 'company';
 
     for (let i = 1; i <= accountsToCreate; i++) {
 
         const email = `${companyEmailPrefix}${i}@company.com`;
-        const { data: { accountId: companyAccountId, profileId: companyProfileId } } = await createCompanyAccount(`Lucas Oliveira ${i}`, email);
-        console.log(`Conta do tipo [COMPANY] criada com sucesso - Email: ${email}`);
-        console.log('Conta criada:', companyAccountId);
-        console.log('Perfil criado:', companyProfileId);
+        const { data: { accountId: companyAccountId, profileId: companyProfileId, userId } } = await createCompanyAccount(`Lucas Oliveira ${i}`, email);
+
+        info(`Conta do tipo [COMPANY] criada com sucesso - Email: ${email}`);
+        info(`Conta criada: ${companyAccountId} Perfil criado: ${companyProfileId} `);
+
+        const deadline = hiringMockModule.getDatePlusThreeDaysInMillis(3).toString();
+
+        const processData = hiringMockModule.newHiringProcess({
+            deadline,
+            pcd: false,
+            negotiable: true,
+            seniority: "Pleno",
+            category: "Front-End",
+            workload: "Full-Time",
+            contractType: "Flexível",
+            salaryRange: "Negociável",
+            locationType: "Presencial",
+            title: `Desenvolvedor Angular Junior ${i}`,
+            description: "Desenvolvedor Angular Junior Descrição",
+        });
+
+        const { data: { processId } } = await hiringService.createProcess({
+            user: {
+                email,
+                accountId: companyAccountId,
+                profileId: companyProfileId,
+                userId
+            },
+            data: processData
+        });
+
+        info(`Processo seletivo criado com sucesso: ${processId}`);
     }
 
     for (let i = 1; i <= accountsToCreate; i++) {
