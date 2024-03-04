@@ -35,7 +35,9 @@ export interface HiringProcess {
     locationType: string;
     workload: string;
     deadline: string;
+    
     pcd: boolean;
+    pcdType: string;
 
     recruiter: string
 

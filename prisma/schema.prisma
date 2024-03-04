@@ -352,6 +352,7 @@ model HiringProcess {
   workload         String
   deadline         String
   pcd              Boolean
+  pcdType          String
   recruiter        String
   subscribersCount Int
 

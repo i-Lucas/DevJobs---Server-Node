@@ -10,7 +10,9 @@ interface HiringData {
     locationType: string;
     workload: string;
     deadline: string;
-    pcd: boolean,
+
+    pcd: boolean;
+    pcdType: string;
 }
 
 function getDatePlusThreeDaysInMillis(days: number): number {
@@ -43,6 +45,7 @@ function newHiringProcess(data: HiringData) {
         workload: data.workload,
         deadline: data.deadline,
         pcd: data.pcd,
+        pcdType: data.pcdType,
 
         benefits: [
             "Home Office",

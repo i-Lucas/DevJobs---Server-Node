@@ -149,7 +149,7 @@ async function getAllAppJobOffers() {
 
 async function getAllAppJobOffersByPagination(startIndex: number, pageSize: number) {
 
-    const count = await db.candidateProfile.count();
+    const count = await db.hiringProcess.count();
 
     const offers = await db.hiringProcess.findMany({
 
