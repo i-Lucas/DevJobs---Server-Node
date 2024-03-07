@@ -8,19 +8,36 @@ const hiringRepository = {
 
         process: createHiringProcessPackage.newHiringProcess,
 
+        steps: {
+
+            step: createHiringProcessPackage.createProcessStep,
+            stepList: createHiringProcessPackage.createProcessStepList,
+            fillCandidatesList: createHiringProcessPackage.fillCandidatesList
+        }
+
     },
 
     update: {
 
         apply: updateHiringProcessPackage.applyNewCandidate,
-        subsCount: updateHiringProcessPackage.updateSubscribersCount
+        subsCount: updateHiringProcessPackage.updateSubscribersCount,
+        
+        steps: {
 
+            currentStep: updateHiringProcessPackage.updateProcessCurrentStep,
+        }
     },
 
     get: {
 
         byId: getHiringProcessPackage.getHiringProcessById,
         allCompanyProcess: getHiringProcessPackage.getCompanyHiringProcessList,
+
+        steps: {
+
+            currentStep: getHiringProcessPackage.getProcessCurrentStep,
+            candidatesList: getHiringProcessPackage.getStepCandidatesLists
+        },
 
         offers: {
 

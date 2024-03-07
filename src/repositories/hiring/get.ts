@@ -1,6 +1,36 @@
 import db from '../../config/db.js';
-import { HiringProcess } from '../../models/hiring.js';
 
+import { HiringProcess, HiringProcessSteps } from '../../models/hiring.js';
+
+async function getProcessCurrentStep(processId: string) {
+
+    const hiringProcess = await db.hiringProcess.findUnique({
+        where: {
+            id: processId
+        },
+        select: {
+            currentStep: true,
+            steps: true,
+        }
+    });
+
+    const currentStep = hiringProcess.steps.find(step => step.identifier === hiringProcess.currentStep);
+    return currentStep;
+}
+
+/*
+async function getProcessCurrentStep(processId: string) {
+
+    return await db.hiringProcess.findUnique({
+        where: {
+            id: processId
+        },
+        select: {
+            currentStep: true
+        }
+    })
+}
+*/
 async function getHiringProcessById(processId: string) {
 
     return await db.hiringProcess.findUnique({
@@ -23,6 +53,48 @@ async function getHiringProcessById(processId: string) {
 
 async function getCompanyHiringProcessList(companyProfileId: string): Promise<HiringProcess[]> {
 
+    const hiringProcesses = await db.hiringProcess.findMany({
+        where: {
+            companyProfileId
+        },
+        include: {
+            steps: {
+                include: {
+                    candidatesLists: {
+                        include: {
+                            candidates: true
+                        }
+                    }
+                }
+            },
+        },
+        orderBy: {
+            updatedAt: 'desc'
+        }
+    });
+
+    if (hiringProcesses.length === 0) return [];
+
+    hiringProcesses.forEach(hiringProcess => {
+
+        if (hiringProcess.steps.length > 0) {
+            
+            // ordenar as etapas de forma que a mais atual fique em primeiro lugar
+            hiringProcess.steps.sort((a, b) => {
+                if (a.createdAt < b.createdAt) return 1;
+                if (a.createdAt > b.createdAt) return -1;
+                return 0;
+            });
+        }
+
+    });
+
+    return hiringProcesses;
+}
+
+/*
+async function getCompanyHiringProcessList(companyProfileId: string): Promise<HiringProcess[]> {
+
     return await db.hiringProcess.findMany({
         where: {
             companyProfileId
@@ -36,13 +108,14 @@ async function getCompanyHiringProcessList(companyProfileId: string): Promise<Hi
                         }
                     }
                 }
-            }
+            },
         },
         orderBy: {
             updatedAt: 'desc'
         }
     })
-}
+};
+*/
 
 async function getCompanyOffersWithoutSteps(companyProfileId: string) {
 
@@ -196,10 +269,33 @@ async function getAllAppJobOffersByPagination(startIndex: number, pageSize: numb
     }
 }
 
+async function getStepCandidatesLists(hiringProcessId: string, stepId: HiringProcessSteps) {
+
+    return await db.processStep.findFirst({
+        where: {
+            hiringProcessId,
+            identifier: stepId
+        },
+        select: {
+            id: true,
+            identifier: true,
+            hiringProcessId: true,
+            candidatesLists: {
+                include: {
+                    candidates: true,
+                },
+
+            }
+        }
+    })
+}
+
 const getHiringProcessPackage = {
     getAllAppJobOffers,
     getCompanyOfferById,
     getHiringProcessById,
+    getProcessCurrentStep,
+    getStepCandidatesLists,
     getCompanyHiringProcessList,
     getCompanyOffersWithoutSteps,
     getAllAppJobOffersByPagination,

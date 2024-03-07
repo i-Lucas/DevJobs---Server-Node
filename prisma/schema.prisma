@@ -330,6 +330,13 @@ enum HiringProcessSteps {
   FROZEN
 }
 
+enum ProcessStepListIdentifier {
+  OTHER
+  QUALIFIED
+  CANDIDATES
+  SUBSCRIBERS
+}
+
 model HiringProcess {
   //
   id String @id @default(uuid())
@@ -356,7 +363,8 @@ model HiringProcess {
   recruiter        String
   subscribersCount Int
 
-  steps ProcessStep[]
+  steps       ProcessStep[]
+  currentStep HiringProcessSteps
 
   createdAt String
   updatedAt String
@@ -382,7 +390,9 @@ model ProcessStepList {
 
   name        String
   description String
-  candidates  HiringDeveloperSubscriber[]
+
+  identifier ProcessStepListIdentifier
+  candidates HiringDeveloperSubscriber[]
 
   processStep   ProcessStep? @relation(fields: [processStepId], references: [id])
   processStepId String?

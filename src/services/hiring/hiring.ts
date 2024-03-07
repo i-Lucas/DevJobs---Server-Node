@@ -1,14 +1,18 @@
 import { ApiResponse } from '../../models/api.js';
 import { UserJwtPayload } from '../../models/user.js';
 
+import utils from '../../utils/appUtils.js';
+
 import { apiErrors, appMessageErros } from '../../errors/index.js';
 
 import {
 
     HiringProcess,
     ProcessStepsList,
+    HiringProcessSteps,
     CreateNewProcessData,
     NewHiringProcessResponse,
+    ProcessStepListIdentifier,
     DeveloperApplyToProcessRequest,
 
 } from '../../models/hiring.js';
@@ -22,7 +26,121 @@ interface CreateNewProcess {
     data: Omit<CreateNewProcessData, 'recruiter'>;
 };
 
-async function createProcess({ data, user: { profileId, email, accountId } }: CreateNewProcess) {
+interface HandleUpdateProcessWhenFirstStep {
+    process: HiringProcess;
+    newStepIdentifier: HiringProcessSteps;
+    currentStepIdenfier: HiringProcessSteps;
+    listIdentifier: ProcessStepListIdentifier;
+}
+
+async function handleUpdateProcess({ process, currentStepIdenfier, newStepIdentifier, listIdentifier }: HandleUpdateProcessWhenFirstStep) {
+
+    const { candidatesLists: allLists } = await hiringRepository.get.steps.candidatesList(process.id, currentStepIdenfier);
+
+    const subscribersList = allLists.find(list => list.identifier === listIdentifier);
+
+    /*
+    if (subscribersList.candidates.length === 0) {
+        apiErrors.BadRequest(appMessageErros.hiring.noCandidate); // ótimo
+    }
+    */
+
+    const newStep = await hiringRepository.create.steps.step({
+        hiringProcessId: process.id,
+        identifier: newStepIdentifier
+    });
+
+    await hiringRepository.update.steps.currentStep(process.id, newStepIdentifier);
+
+    const newStepSubscribersList = await hiringRepository.create.steps.stepList({
+        processStepId: newStep.id,
+        name: 'Candidatos',
+        identifier: 'CANDIDATES',
+        description: 'Lista dos candidatos concorrentes na vaga.',
+    });
+
+    const candidates = subscribersList.candidates;
+    const createdAtAndUpdatedAt = utils.createdAtAndUpdatedAtNow();
+
+    const updatedCandidates = candidates.map(candidate => ({
+        ...candidate,
+        ...createdAtAndUpdatedAt,
+        processStepListId: newStepSubscribersList.id,
+    }));
+
+    await hiringRepository.create.steps.fillCandidatesList(updatedCandidates);
+
+    await hiringRepository.create.steps.stepList({
+        processStepId: newStep.id,
+        name: 'Qualificados',
+        identifier: 'QUALIFIED',
+        description: 'Lista dos candidatos qualificados para a próxima etapa.',
+    });
+}
+
+async function updateProcessStep(processId: string, stepIdentifier: HiringProcessSteps): Promise<ApiResponse<null>> {
+
+    const process = await hiringRepository.get.byId(processId);
+
+    if (!process) {
+        apiErrors.NotFound(appMessageErros.hiring.notFound);
+    };
+
+    const currentStep = await hiringRepository.get.steps.currentStep(process.id);
+
+    switch (currentStep.identifier) {
+
+        case 'OPEN_FOR_APPLICATIONS':
+
+            /*
+            const currentDate = Date.now().toString();
+
+            if (process.deadline > currentDate) {
+                apiErrors.BadRequest(appMessageErros.hiring.openForSubscriptions);
+            } */
+
+            await handleUpdateProcess({
+                process,
+                listIdentifier: 'SUBSCRIBERS', // lista de candidatos que será copiada para a próxima etapa
+                newStepIdentifier: stepIdentifier,
+                currentStepIdenfier: currentStep.identifier,
+            })
+            break;
+
+        case 'PROCESS_COMPLETED':
+            // ultima etapa do processo
+            await hiringRepository.update.steps.currentStep(process.id, 'PROCESS_COMPLETED');
+            break;
+
+        case 'CANCELLED':
+            // tem que notificar todo mundo ... a empresa e os candidatos ... mensagem ..
+            await hiringRepository.update.steps.currentStep(process.id, 'CANCELLED');
+            break;
+
+        case 'FROZEN':
+            break;
+
+        default:
+
+            await handleUpdateProcess({
+                process,
+                listIdentifier: 'QUALIFIED', // apenas candidatos na lista dos qualificados irão prosseguir
+                newStepIdentifier: stepIdentifier,
+                currentStepIdenfier: currentStep.identifier,
+            })
+
+            break;
+    }
+
+    const response: ApiResponse<null> = {
+        status: 200,
+        message: 'Processo seletivo atualizado com sucesso!',
+    };
+
+    return response;
+}
+
+async function createProcess({ data, user: { profileId, email, accountId } }: CreateNewProcess): Promise<ApiResponse<NewHiringProcessResponse>> {
 
     const newProcessResponse = await hiringRepository.create.process({
         profileId,
@@ -90,7 +208,7 @@ async function applyToProcess({ candidate, processId }: DeveloperApplyToProcessR
 
     const { userId: candidateId } = candidate;
 
-    const subscribersList = currentStep.candidatesLists.find(list => list.name === 'Inscritos'); // fragile
+    const subscribersList = currentStep.candidatesLists.find(list => list.identifier === 'SUBSCRIBERS');
 
     const alreadyRegistered = subscribersList.candidates.find(candidate => candidate.userId === candidateId);
 
@@ -141,8 +259,10 @@ function checkProcessHasCanceled(step: Omit<ProcessStepsList, 'candidatesLists'>
 }
 
 const hiringService = {
+
     createProcess,
     applyToProcess,
+    updateProcessStep,
     getCompanyHiringProcessList,
 };
 

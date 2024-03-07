@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "dotenv -e .env.dev nodemon src/index.ts",
-    "dev_db": "dotenv -e .env.dev prisma migrate dev && dotenv -e .env.dev prisma migrate reset",
+    "db_dev": "dotenv -e .env.dev prisma migrate dev && dotenv -e .env.dev prisma migrate reset",
     "test": "dotenv -e .env.test prisma migrate reset && dotenv -e .env.test prisma migrate dev && NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test jest -i"
   },
   "prisma": {

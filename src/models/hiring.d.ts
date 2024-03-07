@@ -35,14 +35,15 @@ export interface HiringProcess {
     locationType: string;
     workload: string;
     deadline: string;
-    
+
     pcd: boolean;
     pcdType: string;
 
     recruiter: string
 
-    steps: ProcessStepsList[];
     subscribersCount: number;
+    steps: ProcessStepsList[];
+    currentStep: HiringProcessSteps;
 
     createdAt: string;
     updatedAt: string;
@@ -60,13 +61,16 @@ export interface ProcessStepsList {
     updatedAt: string;
 }
 
+export type ProcessStepListIdentifier = 'SUBSCRIBERS' | 'QUALIFIED' | 'CANDIDATES' | 'OTHER';
 export interface HiringProcessStepLists {
 
     id?: string;
 
     name: string;
     description: string;
+
     processStepId?: string; // database
+    identifier: ProcessStepListIdentifier;
     candidates: HiringDeveloperSubscriber[];
 
     createdAt: string;
@@ -105,7 +109,7 @@ interface NewHiringProcessResponse {
     recruiter: string;
 
     defaultLists: {
-        qualifiedListId: string;
+        favoritesListId: string;
         subscribersListId: string;
     }
 }
