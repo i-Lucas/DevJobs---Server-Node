@@ -80,11 +80,14 @@ async function createDeveloperAccount(name: string, email: string) {
 
 async function seedAccounts() {
 
-    const accountsToCreate = 1;
-    const devEmailPrefix = 'dev';
-    const companyEmailPrefix = 'company';
+    const companyAccounts = 1;
+    const devAccounts = 25;
+    const devEmailPrefix = 'lucas';
+    const companyEmailPrefix = 'lucas';
 
-    for (let i = 1; i <= accountsToCreate; i++) {
+    let __processId = ''
+
+    for (let i = 1; i <= companyAccounts; i++) {
 
         const email = `${companyEmailPrefix}${i}@company.com`;
         const { data: { accountId: companyAccountId, profileId: companyProfileId, userId } } = await createCompanyAccount(`Lucas Oliveira ${i}`, email);
@@ -92,56 +95,75 @@ async function seedAccounts() {
         info(`Conta do tipo [COMPANY] criada com sucesso - Email: ${email}`);
         info(`Conta criada: ${companyAccountId} Perfil criado: ${companyProfileId} `);
 
-        // const deadline = hiringMockModule.getDatePlusThreeDaysInMillis(3).toString();
+        const deadline = hiringMockModule.getDatePlusThreeDaysInMillis(3).toString();
 
-        // const processData = hiringMockModule.newHiringProcess({
-        //     deadline,
-        //     pcd: false,
-        //     pcdType: '',
-        //     negotiable: true,
-        //     seniority: "Pleno",
-        //     category: "Front-End",
-        //     workload: "Full-Time",
-        //     contractType: "Flexível",
-        //     salaryRange: "Negociável",
-        //     locationType: "Presencial",
-        //     title: `Desenvolvedor Angular Junior ${i}`,
-        //     description: "Desenvolvedor Angular Junior Descrição",
-        // });
+        const processData = hiringMockModule.newHiringProcess({
+            deadline,
+            pcd: false,
+            rhEmail: 'RH'.concat(email),
+            pcdType: '',
+            negotiable: true,
+            seniority: "Pleno",
+            category: "Front-End",
+            workload: "Full-Time",
+            contractType: "Flexível",
+            salaryRange: "Negociável",
+            locationType: "Presencial",
+            currentStep: 'OPEN_FOR_APPLICATIONS',
+            title: `Desenvolvedor Angular Junior ${i}`,
+            description: "Desenvolvedor Angular Junior Descrição",
+        });
 
-        // const { data: { processId } } = await hiringService.createProcess({
-        //     user: {
-        //         email,
-        //         accountId: companyAccountId,
-        //         profileId: companyProfileId,
-        //         userId
-        //     },
-        //     data: processData
-        // });
+        const { data: { processId } } = await hiringService.createProcess({
+            user: {
+                email,
+                accountId: companyAccountId,
+                profileId: companyProfileId,
+                userId
+            },
+            data: processData
+        });
 
-        // info(`Processo seletivo criado com sucesso: ${processId}`);
+        info(`Processo seletivo criado com sucesso: ${processId}`);
+
+        __processId = processId
     }
 
-    for (let i = 1; i <= accountsToCreate; i++) {
+    for (let i = 1; i <= devAccounts; i++) {
 
         const email = `${devEmailPrefix}${i}@dev.com`;
-        const { data: { accountId: devAccountId, profileId: devProfileId } } = await createDeveloperAccount(`Lucas Oliveira ${i}`, email);
-        console.log(`Conta do tipo [DEVELOPER] criada com sucesso - Email: ${email}`);
-        console.log('Conta criada:', devAccountId);
-        console.log('Perfil criado:', devProfileId);
-    }
+        const { data: { accountId: devAccountId, profileId: devProfileId, userId } } = await createDeveloperAccount(`Lucas Oliveira ${i}`, email);
+
+        info(`Conta do tipo [DEVELOPER] criada com sucesso - Email: ${email}`);
+        info(`Conta criada: ${devAccountId} Perfil criado: ${devProfileId} `);
+
+        const { message } = await hiringService.applyToProcess({
+            processId: __processId,
+            candidate: {
+                name: `Lucas Oliveira ${i}`,
+                picture: 'https://www.svgrepo.com/show/527946/user-circle.svg',
+                profileId: devProfileId,
+                accountId: devAccountId,
+                email,
+            }
+        })
+
+        warning(message);
+
+    };
+
 }
 
 async function main() {
 
-    if (ENVIRONMENT === 'TEST') {
-
-        info('TESTES: Pulando Seed');
-
-    } else {
+    if (ENVIRONMENT === 'DEV') {
 
         await clearDB();
         await seedAccounts();
+
+    } else {
+
+        info('Pulando Seed');
     }
 
 };

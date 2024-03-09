@@ -25,6 +25,11 @@ const hiringRepository = {
         steps: {
 
             currentStep: updateHiringProcessPackage.updateProcessCurrentStep,
+
+            list: {
+
+                candidateList: updateHiringProcessPackage.updateCandidateList
+            }
         }
     },
 
@@ -32,6 +37,7 @@ const hiringRepository = {
 
         byId: getHiringProcessPackage.getHiringProcessById,
         allCompanyProcess: getHiringProcessPackage.getCompanyHiringProcessList,
+        rhEmailByRecruiterEmail: getHiringProcessPackage.getCompanyContactEmailByHiringRecruiterEmail,
 
         steps: {
 

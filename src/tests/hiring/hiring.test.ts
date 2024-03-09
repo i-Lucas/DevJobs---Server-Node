@@ -105,7 +105,10 @@ describe('test battery: HIRING', () => {
 
             deadline,
             pcd: false,
+            pcdType: '',
             negotiable: true,
+            rhEmail: companyProfile.suport.rhEmail,
+            currentStep: 'OPEN_FOR_APPLICATIONS',
             seniority: "Pleno",
             category: "Front-End",
             workload: "Full-Time",
@@ -151,7 +154,7 @@ describe('test battery: HIRING', () => {
         const process = responseBody.data.processList.find(process => process.id === hiringProcessId);
 
         expect(process.id === hiringProcessId);
-        expect(process.recruiter === companyProfile.account.email);
+        expect(process.sponsor === companyProfile.account.email);
     });
 
     it('should search for the selection process by ID', async () => {

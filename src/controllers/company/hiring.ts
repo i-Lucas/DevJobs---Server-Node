@@ -5,12 +5,18 @@ import { UserJwtPayload } from '../../models/user.js';
 import hiringService from '../../services/hiring/hiring.js';
 
 async function changeHiringProcessStep(req: Request, res: Response) {
-    
-    const user: UserJwtPayload = res.locals.user;
+
+    const { email: recruiterEmail }: UserJwtPayload = res.locals.user;
 
     const { processId, stepIdentifier } = req.body;
 
-    const response = await hiringService.updateProcessStep(processId, stepIdentifier);
+    // await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    const response = await hiringService.updateProcessStep({
+        processId,
+        recruiterEmail,
+        stepIdentifier,
+    });
 
     return res.status(response.status).json(response);
 }
@@ -38,13 +44,35 @@ async function getCompanyHiringProcess(req: Request, res: Response) {
     const response = await hiringService.getCompanyHiringProcessList(profileId);
 
     return res.status(response.status).json(response);
+};
+
+async function updateHiringProcessStepList(req: Request, res: Response) {
+
+    const { email: recruiterEmail }: UserJwtPayload = res.locals.user;
+
+    const { processId, candidatesLists } = req.body;
+
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    const response = await hiringService.updateCandidateList({ recruiterEmail, processId, candidatesLists });
+
+    return res.status(response.status).json(response);
+};
+
+async function createNewCandidateList(req: Request, res: Response) {
+
+    const response = await hiringService.createNewStepCandidateList(req.body);
+
+    return res.status(response.status).json(response);
 }
 
 const companyHiringController = {
 
     startHiringProcess,
+    createNewCandidateList,
     getCompanyHiringProcess,
     changeHiringProcessStep,
+    updateHiringProcessStepList,
 }
 
 export default companyHiringController;

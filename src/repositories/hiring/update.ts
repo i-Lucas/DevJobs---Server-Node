@@ -5,6 +5,8 @@ import {
     HiringProcess,
     ApplyNewCandidate,
     HiringProcessSteps,
+    HiringDeveloperSubscriber,
+
 } from '../../models/hiring.js';
 
 interface UpdateSubscribersCount {
@@ -27,21 +29,6 @@ async function updateProcessCurrentStep(processId: string, newCurrentStep: Hirin
     })
 }
 
-/*
-async function updateCandidates(processStepListId: string, newStepSubscribersListId: string) {
-
-    return await db.hiringDeveloperSubscriber.updateMany({
-
-        where: {
-            processStepListId
-        },
-        data: {
-            processStepListId: newStepSubscribersListId
-        }
-    })
-}
-*/
-
 async function updateSubscribersCount({ id, subscribersCount }: UpdateSubscribersCount) {
 
     await db.hiringProcess.update({
@@ -52,6 +39,24 @@ async function updateSubscribersCount({ id, subscribersCount }: UpdateSubscriber
             subscribersCount: subscribersCount + 1
         }
     })
+}
+
+async function updateCandidateList(candidates: HiringDeveloperSubscriber[]) {
+
+    const now = utils.now();
+
+    for (const candidate of candidates) {
+
+        await db.hiringDeveloperSubscriber.update({
+            where: {
+                id: candidate.id
+            },
+            data: {
+                ...candidate,
+                updatedAt: now
+            }
+        });
+    }
 }
 
 async function applyNewCandidate({ processStepListId, candidate }: ApplyNewCandidate) {
@@ -71,6 +76,7 @@ async function applyNewCandidate({ processStepListId, candidate }: ApplyNewCandi
 
 const updateHiringProcessPackage = {
     applyNewCandidate,
+    updateCandidateList,
     updateSubscribersCount,
     updateProcessCurrentStep,
 };

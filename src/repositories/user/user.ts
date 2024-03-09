@@ -65,9 +65,22 @@ async function findUserById(id: string) {
 	});
 }
 
+async function getUserEmailByUserId(userId: string) {
+
+	return await db.users.findUnique({
+		where: {
+			id: userId
+		},
+		select: {
+			email: true
+		}
+	})
+}
+
 const userRepository = {
 	findUserById,
 	getOnlyUserEmail,
+	getUserEmailByUserId,
 	createNewUserAccount,
 	getUserAndAccountByEmail,
 };

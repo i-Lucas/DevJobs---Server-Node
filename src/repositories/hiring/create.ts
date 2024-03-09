@@ -4,9 +4,9 @@ import utils from '../../utils/appUtils.js';
 import {
     ProcessStepsList,
     CreateNewProcessData,
+    CreateProcessStepList,
     NewHiringProcessResponse,
     HiringDeveloperSubscriber,
-    ProcessStepListIdentifier,
 
 } from '../../models/hiring.js';
 
@@ -19,14 +19,6 @@ interface CreateProcessStep {
 
     hiringProcessId: string;
     identifier: ProcessStepsList['identifier'];
-}
-
-interface CreateProcessStepList {
-
-    name: string;
-    description: string;
-    processStepId: string;
-    identifier: ProcessStepListIdentifier;
 }
 
 async function fillCandidatesList(updatedCandidates: HiringDeveloperSubscriber[]) {
@@ -71,23 +63,7 @@ async function createProcessStep({ hiringProcessId, identifier }: CreateProcessS
             hiringProcessId,
             ...createdAtAndUpdatedAt,
         }
-    })
-
-    /*
-    return await db.hiringProcess.update({
-        where: {
-            id: processId
-        },
-        data: {
-            steps: {
-                create: {
-                    identifier: stepIdentifier,
-                    ...createdAtAndUpdatedAt,
-                }
-            }
-        }
-    })
-    */
+    });
 };
 
 async function newHiringProcess({ data, profileId }: CreateNewProcess): Promise<NewHiringProcessResponse> {
@@ -116,19 +92,6 @@ async function newHiringProcess({ data, profileId }: CreateNewProcess): Promise<
         identifier: 'OPEN_FOR_APPLICATIONS',
     })
 
-    /*
-    const { id: processStepId } = await db.processStep.create({
-
-        data: {
-
-            identifier: 'OPEN_FOR_APPLICATIONS',
-            hiringProcessId,
-
-            ...createdAtAndUpdatedAt,
-        }
-    })
-    */
-
     const { id: subscribersListId } = await createProcessStepList({
         processStepId,
         name: 'Inscritos',
@@ -139,40 +102,14 @@ async function newHiringProcess({ data, profileId }: CreateNewProcess): Promise<
     const { id: favoritesListId } = await createProcessStepList({
         processStepId,
         name: 'Favoritos',
-        identifier: 'OTHER',
+        identifier: 'FAVORITES',
         description: 'Exemplo de lista personalizada de candidatos favoritos',
     });
-
-    /*
-    const { id: subscribersListId } = await db.processStepList.create({
-
-        data: {
-
-            name: 'Inscritos',
-            description: 'Lista dos candidatos inscritos na vaga.',
-            processStepId,
-
-            ...createdAtAndUpdatedAt,
-        }
-    })
-
-    const { id: favoritesListId } = await db.processStepList.create({
-
-        data: {
-
-            name: 'Favoritos',
-            description: 'Exemplo de lista personalizada de candidatos favoritos',
-            processStepId,
-
-            ...createdAtAndUpdatedAt,
-        }
-    }) 
-    */
 
     return {
 
         stepId: processStepId,
-        recruiter: data.recruiter,
+        recruiter: data.sponsor,
         processId: hiringProcessId,
         defaultLists: {
             favoritesListId,

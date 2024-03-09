@@ -1,15 +1,19 @@
+import { HiringProcessSteps } from "../../../models/hiring.js";
+
 interface HiringData {
 
     title: string;
-    description: string;
-    category: string;
-    seniority: string;
-    salaryRange: string;
-    negotiable: boolean,
-    contractType: string;
-    locationType: string;
+    rhEmail: string;
     workload: string;
     deadline: string;
+    category: string;
+    seniority: string;
+    negotiable: boolean,
+    salaryRange: string;
+    description: string;
+    contractType: string;
+    locationType: string;
+    currentStep: HiringProcessSteps
 
     pcd: boolean;
     pcdType: string;
@@ -40,12 +44,14 @@ function newHiringProcess(data: HiringData) {
         seniority: data.seniority,
         salaryRange: data.salaryRange,
         negotiable: data.negotiable,
+        rhEmail: data.rhEmail,
         contractType: data.contractType,
         locationType: data.locationType,
         workload: data.workload,
         deadline: data.deadline,
         pcd: data.pcd,
         pcdType: data.pcdType,
+        currentStep: data.currentStep,
 
         benefits: [
             "Home Office",

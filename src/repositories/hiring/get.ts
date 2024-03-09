@@ -2,6 +2,26 @@ import db from '../../config/db.js';
 
 import { HiringProcess, HiringProcessSteps } from '../../models/hiring.js';
 
+async function getCompanyContactEmailByHiringRecruiterEmail(email: string) {
+
+    return await db.hiringProcess.findFirst({
+        where: {
+            sponsor: email
+        },
+        select: {
+            company: {
+                select: {
+                    CompanyProfileSupportInfoModel: {
+                        select: {
+                            rhEmail: true
+                        }
+                    }
+                }
+            }
+        },
+    })
+}
+
 async function getProcessCurrentStep(processId: string) {
 
     const hiringProcess = await db.hiringProcess.findUnique({
@@ -18,19 +38,6 @@ async function getProcessCurrentStep(processId: string) {
     return currentStep;
 }
 
-/*
-async function getProcessCurrentStep(processId: string) {
-
-    return await db.hiringProcess.findUnique({
-        where: {
-            id: processId
-        },
-        select: {
-            currentStep: true
-        }
-    })
-}
-*/
 async function getHiringProcessById(processId: string) {
 
     return await db.hiringProcess.findUnique({
@@ -78,7 +85,7 @@ async function getCompanyHiringProcessList(companyProfileId: string): Promise<Hi
     hiringProcesses.forEach(hiringProcess => {
 
         if (hiringProcess.steps.length > 0) {
-            
+
             // ordenar as etapas de forma que a mais atual fique em primeiro lugar
             hiringProcess.steps.sort((a, b) => {
                 if (a.createdAt < b.createdAt) return 1;
@@ -299,6 +306,7 @@ const getHiringProcessPackage = {
     getCompanyHiringProcessList,
     getCompanyOffersWithoutSteps,
     getAllAppJobOffersByPagination,
+    getCompanyContactEmailByHiringRecruiterEmail
 }
 
 export default getHiringProcessPackage;

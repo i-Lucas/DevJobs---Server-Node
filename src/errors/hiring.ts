@@ -3,10 +3,11 @@ export interface HiringMessageErrors {
     frozen: string;
     notFound: string;
     cancelled: string;
-    noCandidate: string;
+    noCandidates: string;
     alreadyRegistered: string;
     registrationsClosed: string;
     openForSubscriptions: string;
+    withoutPermission: string
 
     jobOffer: {
 
@@ -23,7 +24,8 @@ export const hiringMessageErrors: HiringMessageErrors = {
     frozen: 'Processo seletivo suspenso temporariamente.',
     alreadyRegistered: 'Você já se inscreveu nesse processo.',
     openForSubscriptions: 'O prazo para inscrições ainda não acabou.',
-    noCandidate: 'Nenhum candidato está inscrito ou qualificado para a próxima etapa.',
+    noCandidates: 'Nenhum candidato está inscrito ou qualificado para a próxima etapa.',
+    withoutPermission: 'Você não tem permissão para fazer essa modificação.',
 
     jobOffer: {
 

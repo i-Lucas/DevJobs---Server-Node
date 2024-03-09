@@ -333,6 +333,7 @@ enum HiringProcessSteps {
 enum ProcessStepListIdentifier {
   OTHER
   QUALIFIED
+  FAVORITES
   CANDIDATES
   SUBSCRIBERS
 }
@@ -360,7 +361,8 @@ model HiringProcess {
   deadline         String
   pcd              Boolean
   pcdType          String
-  recruiter        String
+  sponsor          String
+  rhEmail          String
   subscribersCount Int
 
   steps       ProcessStep[]
@@ -408,7 +410,8 @@ model HiringDeveloperSubscriber {
   name      String
   picture   String
   profileId String
-  userId    String
+  accountId String
+  email     String
 
   ProcessStepList   ProcessStepList? @relation(fields: [processStepListId], references: [id])
   processStepListId String?

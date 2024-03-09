@@ -1,3 +1,5 @@
+import { CompanyProfile } from './profile/company.profile.js';
+
 export type HiringProcessSteps =
     | 'OPEN_FOR_APPLICATIONS'   // Vaga aberta para candidaturas
     | 'RESUME_SCREENING'        // Triagem inicial de currículos
@@ -39,7 +41,8 @@ export interface HiringProcess {
     pcd: boolean;
     pcdType: string;
 
-    recruiter: string
+    sponsor: string;
+    rhEmail: string;
 
     subscribersCount: number;
     steps: ProcessStepsList[];
@@ -61,7 +64,7 @@ export interface ProcessStepsList {
     updatedAt: string;
 }
 
-export type ProcessStepListIdentifier = 'SUBSCRIBERS' | 'QUALIFIED' | 'CANDIDATES' | 'OTHER';
+export type ProcessStepListIdentifier = 'SUBSCRIBERS' | 'QUALIFIED' | 'CANDIDATES' | 'FAVORITES' | 'OTHER';
 export interface HiringProcessStepLists {
 
     id?: string;
@@ -83,8 +86,11 @@ export interface HiringDeveloperSubscriber {
 
     name: string;
     picture: string;
-    userId: string;
+
+    email: string;
     profileId: string;
+    accountId: string;
+
     processStepListId?: string; // database
 
     createdAt: string;
@@ -163,4 +169,15 @@ export interface JobOfferResponse {
 
     count: number;
     offers: JobOfferData[],
+}
+
+// ---------------------------------------------------------------------------------------------------------- repository
+
+export interface CreateProcessStepList {
+
+    name: string;
+    processId?: string;
+    description: string;
+    processStepId: string;
+    identifier: ProcessStepListIdentifier;
 }

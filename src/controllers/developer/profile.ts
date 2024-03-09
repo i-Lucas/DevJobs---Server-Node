@@ -25,7 +25,7 @@ async function updateDeveloperProfile(req: Request, res: Response) {
 
     const { identifier, data, profileId } = req.body;
 
-    await new Promise((resolve) => setTimeout(resolve, 2900));
+    // await new Promise((resolve) => setTimeout(resolve, 2900));
 
     const response = await developerProfileService.updateDeveloperProfile({ data, identifier, profileId });
 
@@ -56,11 +56,10 @@ async function addDeveloperProfileField(req: Request, res: Response) {
 
 async function getDeveloperTalents(req: Request, res: Response) {
 
-    await new Promise((resolve) => setTimeout(resolve, 850));
+    // await new Promise((resolve) => setTimeout(resolve, 850));
 
     const page = parseInt(req.query.page as string) || 1;
     const pageSize = parseInt(req.query.pageSize as string) || 10;
-
     const startIndex = (page - 1) * pageSize;
 
     const response = await developerProfileService.getTalentsByPagination(startIndex, pageSize);
