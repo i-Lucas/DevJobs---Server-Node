@@ -38,6 +38,23 @@ interface UpdateProcess {
     stepIdentifier: HiringProcessSteps
 }
 
+async function getCompanyHiringProcessById(companyProfileId: string, processId: string): Promise<ApiResponse<HiringProcess>> {
+    
+    const process = await hiringRepository.get.companyProcessById(companyProfileId, processId);
+
+    if (!process) {
+        apiErrors.NotFound(appMessageErros.hiring.notFound);
+    };
+
+    const response: ApiResponse<HiringProcess> = {
+        status: 200,
+        data: process,
+        message: 'Processo seletivo encontrado com sucesso!',
+    };
+
+    return response;
+}
+
 async function updateCandidateList({ recruiterEmail, processId, candidatesLists }: UpdateCandidatesList): Promise<ApiResponse<null>> {
 
     const process = await hiringRepository.get.byId(processId);
@@ -68,21 +85,17 @@ async function createNewStepCandidateList(data: CreateProcessStepList): Promise<
         apiErrors.NotFound(appMessageErros.hiring.notFound);
     }
 
-    try {
+    // validar se tem permissão
 
-        const { id: newListId } = await hiringRepository.create.steps.stepList(data);
+    const { id: newListId } = await hiringRepository.create.steps.stepList(data);
 
-        const response: ApiResponse<{ newListId: string }> = {
-            status: 200,
-            data: { newListId },
-            message: 'Lista de candidatos criada com sucesso!',
-        };
+    const response: ApiResponse<{ newListId: string }> = {
+        status: 200,
+        data: { newListId },
+        message: 'Lista de candidatos criada com sucesso!',
+    };
 
-        return response;
-
-    } catch (error) {
-        console.log(error)
-    }
+    return response;
 }
 
 async function updateProcessStep({ processId, recruiterEmail, stepIdentifier }: UpdateProcess): Promise<ApiResponse<null>> {
@@ -278,6 +291,7 @@ const hiringService = {
     updateCandidateList,
     createNewStepCandidateList,
     getCompanyHiringProcessList,
+    getCompanyHiringProcessById,
 };
 
 export default hiringService; 

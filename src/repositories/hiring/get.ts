@@ -58,6 +58,38 @@ async function getHiringProcessById(processId: string) {
     })
 }
 
+async function getCompanyHiringProcessById(companyProfileId: string, processId: string): Promise<HiringProcess> {
+
+    const process = await db.hiringProcess.findUnique({
+        where: {
+            id: processId,
+            companyProfileId
+        },
+        include: {
+            steps: {
+                include: {
+                    candidatesLists: {
+                        include: {
+                            candidates: true
+                        }
+                    }
+                }
+            },
+        },
+    })
+
+    if (process.steps.length > 0) {
+
+        process.steps.sort((a, b) => {
+            if (a.createdAt < b.createdAt) return 1;
+            if (a.createdAt > b.createdAt) return -1;
+            return 0;
+        });
+    }
+
+    return process;
+}
+
 async function getCompanyHiringProcessList(companyProfileId: string): Promise<HiringProcess[]> {
 
     const hiringProcesses = await db.hiringProcess.findMany({
@@ -98,31 +130,6 @@ async function getCompanyHiringProcessList(companyProfileId: string): Promise<Hi
 
     return hiringProcesses;
 }
-
-/*
-async function getCompanyHiringProcessList(companyProfileId: string): Promise<HiringProcess[]> {
-
-    return await db.hiringProcess.findMany({
-        where: {
-            companyProfileId
-        },
-        include: {
-            steps: {
-                include: {
-                    candidatesLists: {
-                        include: {
-                            candidates: true
-                        }
-                    }
-                }
-            },
-        },
-        orderBy: {
-            updatedAt: 'desc'
-        }
-    })
-};
-*/
 
 async function getCompanyOffersWithoutSteps(companyProfileId: string) {
 
@@ -303,6 +310,7 @@ const getHiringProcessPackage = {
     getHiringProcessById,
     getProcessCurrentStep,
     getStepCandidatesLists,
+    getCompanyHiringProcessById,
     getCompanyHiringProcessList,
     getCompanyOffersWithoutSteps,
     getAllAppJobOffersByPagination,

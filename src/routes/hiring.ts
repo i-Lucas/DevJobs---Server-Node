@@ -10,6 +10,7 @@ const hiringRouter = Router();
 
 hiringRouter.post('/hiring/new', tokenHandler, companyHiringController.startHiringProcess);
 hiringRouter.get('/hiring/get', tokenHandler, companyHiringController.getCompanyHiringProcess);
+hiringRouter.get('/hiring/get/:processId', tokenHandler, companyHiringController.getCompanyHiringProcessById);
 
 hiringRouter.post('/hiring/update/step', tokenHandler, companyHiringController.changeHiringProcessStep);
 hiringRouter.post('/hiring/update/list', tokenHandler, companyHiringController.updateHiringProcessStepList);

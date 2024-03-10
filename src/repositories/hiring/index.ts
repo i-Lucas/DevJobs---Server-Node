@@ -37,6 +37,7 @@ const hiringRepository = {
 
         byId: getHiringProcessPackage.getHiringProcessById,
         allCompanyProcess: getHiringProcessPackage.getCompanyHiringProcessList,
+        companyProcessById: getHiringProcessPackage.getCompanyHiringProcessById,
         rhEmailByRecruiterEmail: getHiringProcessPackage.getCompanyContactEmailByHiringRecruiterEmail,
 
         steps: {

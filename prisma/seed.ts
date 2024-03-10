@@ -117,9 +117,10 @@ async function seedAccounts() {
         const { data: { processId } } = await hiringService.createProcess({
             user: {
                 email,
+                userId,
+                accountType: 'COMPANY',
                 accountId: companyAccountId,
                 profileId: companyProfileId,
-                userId
             },
             data: processData
         });

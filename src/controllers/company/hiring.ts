@@ -46,6 +46,17 @@ async function getCompanyHiringProcess(req: Request, res: Response) {
     return res.status(response.status).json(response);
 };
 
+async function getCompanyHiringProcessById(req: Request, res: Response) {
+
+    const { profileId }: UserJwtPayload = res.locals.user;
+
+    const { processId } = req.params;
+
+    const response = await hiringService.getCompanyHiringProcessById(profileId, processId);
+
+    return res.status(response.status).json(response);
+}
+
 async function updateHiringProcessStepList(req: Request, res: Response) {
 
     const { email: recruiterEmail }: UserJwtPayload = res.locals.user;
@@ -72,6 +83,7 @@ const companyHiringController = {
     createNewCandidateList,
     getCompanyHiringProcess,
     changeHiringProcessStep,
+    getCompanyHiringProcessById,
     updateHiringProcessStepList,
 }
 
