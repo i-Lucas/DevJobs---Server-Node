@@ -32,6 +32,12 @@ interface UpdateCandidatesList {
     candidatesLists: HiringDeveloperSubscriber[]
 }
 
+interface HandleUpdateProcessStep {
+    process: HiringProcess;
+    currentStep: HiringProcessSteps;
+    newStepIdentifier: HiringProcessSteps;
+}
+
 interface UpdateProcess {
     processId: string;
     recruiterEmail: string;
@@ -39,7 +45,7 @@ interface UpdateProcess {
 }
 
 async function getCompanyHiringProcessById(companyProfileId: string, processId: string): Promise<ApiResponse<HiringProcess>> {
-    
+
     const process = await hiringRepository.get.companyProcessById(companyProfileId, processId);
 
     if (!process) {
@@ -97,8 +103,8 @@ async function createNewStepCandidateList(data: CreateProcessStepList): Promise<
 
     return response;
 }
-
-async function updateProcessStep({ processId, recruiterEmail, stepIdentifier }: UpdateProcess): Promise<ApiResponse<null>> {
+/*
+async function updateProcessStep({ processId, recruiterEmail, stepIdentifier }: UpdateProcess): Promise<ApiResponse<ProcessStepsList>> {
 
     const process = await hiringRepository.get.byId(processId);
 
@@ -112,18 +118,20 @@ async function updateProcessStep({ processId, recruiterEmail, stepIdentifier }: 
 
     const currentStep = await hiringRepository.get.steps.currentStep(process.id);
 
+    let newStep: ProcessStepsList | undefined;
+
     switch (currentStep.identifier) {
 
         case 'OPEN_FOR_APPLICATIONS':
 
-            /*
+        
             const currentDate = Date.now().toString();
 
             if (process.deadline > currentDate) {
                 apiErrors.BadRequest(appMessageErros.hiring.openForSubscriptions);
-            } */
+            } 
 
-            await hiringStepsPackage.handleUpdateProcess({
+            newStep = await hiringStepsPackage.handleUpdateProcess({
                 process,
                 listIdentifiers: ['SUBSCRIBERS', 'OTHER'], // lista de candidatos que será copiada para a próxima etapa
                 newStepIdentifier: stepIdentifier,
@@ -147,7 +155,7 @@ async function updateProcessStep({ processId, recruiterEmail, stepIdentifier }: 
 
         default:
 
-            await hiringStepsPackage.handleUpdateProcess({
+            newStep = await hiringStepsPackage.handleUpdateProcess({
                 process,
                 listIdentifiers: ['QUALIFIED'], // apenas candidatos na lista dos qualificados irão prosseguir
                 newStepIdentifier: stepIdentifier,
@@ -157,12 +165,100 @@ async function updateProcessStep({ processId, recruiterEmail, stepIdentifier }: 
             break;
     }
 
-    const response: ApiResponse<null> = {
+    const response: ApiResponse<ProcessStepsList> = {
         status: 200,
+        data: newStep,
         message: 'Processo seletivo atualizado com sucesso!',
     };
 
     return response;
+}
+*/
+
+async function updateProcessStep({ processId, recruiterEmail, stepIdentifier }: UpdateProcess): Promise<ApiResponse<ProcessStepsList>> {
+
+    const process = await hiringRepository.get.byId(processId);
+
+    if (!process) {
+        apiErrors.NotFound(appMessageErros.hiring.notFound);
+    }
+
+    if (process.sponsor !== recruiterEmail) {
+        apiErrors.BadRequest(appMessageErros.hiring.withoutPermission);
+    }
+
+    const currentStep = await hiringRepository.get.steps.currentStep(process.id);
+
+    let newStep: ProcessStepsList | undefined;
+
+    switch (currentStep.identifier) {
+
+        case 'OPEN_FOR_APPLICATIONS':
+
+            newStep = await handleOpenForApplications({
+                process,
+                newStepIdentifier: stepIdentifier,
+                currentStep: currentStep.identifier
+            });
+            break;
+
+        case 'PROCESS_COMPLETED':
+            await hiringRepository.update.steps.currentStep(process.id, 'PROCESS_COMPLETED');
+            break;
+
+        case 'CANCELLED':
+            await hiringRepository.update.steps.currentStep(process.id, 'CANCELLED');
+            break;
+
+        case 'FROZEN':
+            break;
+
+        default:
+
+            newStep = await handleDefaultStep({
+                process,
+                newStepIdentifier: stepIdentifier,
+                currentStep: currentStep.identifier
+            });
+
+            break;
+    }
+
+    const response: ApiResponse<ProcessStepsList> = {
+        status: 200,
+        data: newStep,
+        message: 'Processo seletivo atualizado com sucesso!',
+    };
+
+    return response;
+}
+
+async function handleOpenForApplications({ process, newStepIdentifier, currentStep }: HandleUpdateProcessStep): Promise<ProcessStepsList> {
+
+    /*
+    const currentDate = Date.now().toString();
+
+    if (process.deadline > currentDate) {
+        throw new Error(apiErrors.BadRequest(appMessageErros.hiring.openForSubscriptions));
+    }
+    */
+
+    return await hiringStepsPackage.handleUpdateProcess({
+        process,
+        newStepIdentifier,
+        currentStepIdenfier: currentStep,
+        listIdentifiers: ['SUBSCRIBERS', 'OTHER'],
+    });
+}
+
+async function handleDefaultStep({ process, currentStep, newStepIdentifier }: HandleUpdateProcessStep): Promise<ProcessStepsList> {
+
+    return await hiringStepsPackage.handleUpdateProcess({
+        process,
+        newStepIdentifier,
+        listIdentifiers: ['QUALIFIED'],
+        currentStepIdenfier: currentStep,
+    });
 }
 
 async function createProcess({ data, user: { profileId, email, accountId } }: CreateNewProcess): Promise<ApiResponse<NewHiringProcessResponse>> {

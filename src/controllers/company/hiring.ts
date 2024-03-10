@@ -10,7 +10,7 @@ async function changeHiringProcessStep(req: Request, res: Response) {
 
     const { processId, stepIdentifier } = req.body;
 
-    // await new Promise((resolve) => setTimeout(resolve, 1500));
+    // await new Promise((resolve) => setTimeout(resolve, 700));
 
     const response = await hiringService.updateProcessStep({
         processId,

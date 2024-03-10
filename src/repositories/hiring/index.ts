@@ -43,7 +43,8 @@ const hiringRepository = {
         steps: {
 
             currentStep: getHiringProcessPackage.getProcessCurrentStep,
-            candidatesList: getHiringProcessPackage.getStepCandidatesLists
+            candidatesList: getHiringProcessPackage.getStepCandidatesLists,
+            getStepById: getHiringProcessPackage.getStepById
         },
 
         offers: {

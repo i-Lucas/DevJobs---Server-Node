@@ -304,7 +304,26 @@ async function getStepCandidatesLists(hiringProcessId: string, stepId: HiringPro
     })
 }
 
+async function getStepById(stepId: string) {
+
+    return await db.processStep.findUnique({
+        where: {
+            id: stepId
+        },
+        include: {
+            candidatesLists: {
+                include: {
+                    candidates: true,
+                },
+
+            }
+        }
+
+    })
+}
+
 const getHiringProcessPackage = {
+    getStepById,
     getAllAppJobOffers,
     getCompanyOfferById,
     getHiringProcessById,

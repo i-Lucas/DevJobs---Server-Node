@@ -81,7 +81,7 @@ async function createDeveloperAccount(name: string, email: string) {
 async function seedAccounts() {
 
     const companyAccounts = 1;
-    const devAccounts = 25;
+    const devAccounts = 35;
     const devEmailPrefix = 'lucas';
     const companyEmailPrefix = 'lucas';
 

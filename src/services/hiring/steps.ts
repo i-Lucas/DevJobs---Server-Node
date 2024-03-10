@@ -9,6 +9,7 @@ import {
     HiringProcessStepLists,
     ProcessStepListIdentifier,
     HiringDeveloperSubscriber,
+    ProcessStepsList,
 
 } from '../../models/hiring.js';
 
@@ -97,6 +98,8 @@ async function sendMessages({ candidates, severity, process, messageBody }: Send
 
 async function fillCandidateList(candidateListId: string, candidates: HiringDeveloperSubscriber[]) {
 
+    if(candidates.length === 0) return;
+    
     const createdAtAndUpdatedAt = utils.createdAtAndUpdatedAtNow();
 
     const updatedCandidates = candidates.map(candidate => ({
@@ -108,7 +111,7 @@ async function fillCandidateList(candidateListId: string, candidates: HiringDeve
     await hiringRepository.create.steps.fillCandidatesList(updatedCandidates);
 };
 
-async function handleUpdateProcess({ process, currentStepIdenfier, newStepIdentifier, listIdentifiers }: HandleUpdateProcessStep) {
+async function handleUpdateProcess({ process, currentStepIdenfier, newStepIdentifier, listIdentifiers }: HandleUpdateProcessStep): Promise<ProcessStepsList> {
 
     const { candidatesLists: allLists } = await hiringRepository.get.steps.candidatesList(process.id, currentStepIdenfier);
 
@@ -124,16 +127,15 @@ async function handleUpdateProcess({ process, currentStepIdenfier, newStepIdenti
 
     await fillCandidateList(newStepSubscribersList.id, allCandidates);
 
-    if (allFavorites.length > 0) {
-
-        const newStepFavoritesList = await createFavoritesCandidatesList(newStep.id);
-        await fillCandidateList(newStepFavoritesList.id, allFavorites);
-    }
+    const newStepFavoritesList = await createFavoritesCandidatesList(newStep.id);
+   
+    await fillCandidateList(newStepFavoritesList.id, allFavorites);
 
     await createNextStepQualifiedsCandidatesList(newStep.id);
 
     const allApprovedCandidates: HiringDeveloperSubscriber[] = [...allCandidates, ...allFavorites];
 
+    // messageBodyHTMLService  ...
     const approvedMessageBodyHTML = `Você foi aprovado para a próxima etapa do processo ${process.title} !`
     const reprovedMessageBodyHTML = `Infelizmente você não foi aprovado para a vaga ${process.title} !`
 
@@ -150,6 +152,9 @@ async function handleUpdateProcess({ process, currentStepIdenfier, newStepIdenti
         candidates: notApprovedCandidates,
         messageBody: reprovedMessageBodyHTML,
     });
+
+    const sendNewStep = await hiringRepository.get.steps.getStepById(newStep.id)
+    return sendNewStep;
 }
 
 async function createFavoritesCandidatesList(processStepId: string) {
