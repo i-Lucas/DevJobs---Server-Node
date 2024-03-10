@@ -25,7 +25,8 @@ async function signin({ email, password }: SigninUser): Promise<string> {
 		userId: user.id,
 		email: user.email,
 		accountId: user.Account.id,
-		profileId: user.Account.profileId
+		profileId: user.Account.profileId,
+		accountType: user.Account.accountType
 	};
 
 	const token = jwt.sign(payload, config.api.env.JWT_SECRET, {

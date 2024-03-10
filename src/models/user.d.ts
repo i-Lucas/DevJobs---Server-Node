@@ -16,6 +16,7 @@ export interface UserJwtPayload {
     userId: string,
     accountId: string;
     profileId: string;
+    accountType: AccountType;
 }
 
 export interface CreateNewUserAccount {

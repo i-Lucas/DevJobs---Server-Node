@@ -55,7 +55,7 @@ async function getAccountProfile(account: Account) {
 	}
 };
 
-async function getAccountData({ accountId, profileId, userId }: Omit<UserJwtPayload, 'email'>) {
+async function getAccountData({ accountId, profileId, userId }: Omit<UserJwtPayload, 'email' | 'accountType'>) {
 
 	const user = await userRepository.findUserById(userId);
 

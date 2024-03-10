@@ -2,7 +2,16 @@ import db from '../../config/db.js';
 import appConfig from '../../config/app.js';
 
 import utils from '../../utils/appUtils.js';
+import { AccountType } from '../../models/account.js';
 import { CreateNewUserAccount, User } from '../../models/user.js';
+
+interface GetUserJwtDataPayload {
+	Account: {
+		id: string,
+		profileId: string,
+		accountType: AccountType
+	}
+}
 
 async function createNewUserAccount({ user, account }: CreateNewUserAccount) {
 
@@ -39,7 +48,7 @@ async function getOnlyUserEmail(email: string) {
 	});
 };
 
-async function getUserAndAccountByEmail(email: string): Promise<User & { Account: { id: string, profileId: string } }> {
+async function getUserAndAccountByEmail(email: string): Promise<User & GetUserJwtDataPayload> {
 
 	return await db.users.findUnique({
 		where: {
@@ -49,7 +58,8 @@ async function getUserAndAccountByEmail(email: string): Promise<User & { Account
 			Account: {
 				select: {
 					id: true,
-					profileId: true
+					profileId: true,
+					accountType: true
 				}
 			}
 		}
