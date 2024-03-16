@@ -3,9 +3,9 @@ import companyAccountService from '../../services/company/account.js';
 
 async function createCompanyAccount(req: Request, res: Response) {
 
-	// await new Promise((resolve) => setTimeout(resolve, 3500));
-
 	const response = await companyAccountService.createCompanyAccount(req.body);
+	
+	await new Promise((resolve) => setTimeout(resolve, 850));
 
 	return res.status(response.status).json(response);
 }

@@ -1,20 +1,26 @@
-import { CompanyProfile } from './profile/company.profile.js';
+export type CandidateStatus =
+    'REGISTERED'                                                                // Inscrito
+    | 'REPROVED'                                                                // Reprovado
+    | 'APPROVED_FOR_NEXT_STAGE'                                                 // Aprovado para próxima etapa
+    | 'APPROVED'                                                                // Aprovado
+    | 'JOB_FROZEN'                                                              // Aguardando
+    | 'JOB_CANCELED'                                                            // Encerrado
 
 export type HiringProcessSteps =
-    | 'OPEN_FOR_APPLICATIONS'   // Vaga aberta para candidaturas
-    | 'RESUME_SCREENING'        // Triagem inicial de currículos
-    | 'INTERVIEW_SELECTION'     // Seleção de candidatos para entrevistas
-    | 'INITIAL_INTERVIEWS'      // Entrevistas iniciais
-    | 'TECHNICAL_ASSESSMENT'    // Avaliação técnica ou desafio de programação
-    | 'FINAL_INTERVIEWS'        // Entrevistas finais
-    | 'BEHAVIORAL_ASSESSMENT'   // Avaliação de habilidades comportamentais
-    | 'PROJECT_CHALLENGE'       // Desafio de projeto ou prático
-    | 'MANAGER_INTERVIEWS'      // Entrevistas com líderes ou gestores
-    | 'REFERENCE_CHECK'         // Verificação de referências
-    | 'JOB_OFFER'               // Oferta de emprego
-    | 'PROCESS_COMPLETED'       // Processo de contratação concluído
-    | 'CANCELLED'               // Processo de contratação cancelado
-    | 'FROZEN';                 // Processo de contratação congelado ou suspenso temporariamente
+    | 'OPEN_FOR_APPLICATIONS'                                                   // Vaga aberta para candidaturas
+    | 'RESUME_SCREENING'                                                        // Triagem inicial de currículos
+    | 'INTERVIEW_SELECTION'                                                     // Seleção de candidatos para entrevistas
+    | 'INITIAL_INTERVIEWS'                                                      // Entrevistas iniciais
+    | 'TECHNICAL_ASSESSMENT'                                                    // Avaliação técnica ou desafio de programação
+    | 'FINAL_INTERVIEWS'                                                        // Entrevistas finais
+    | 'BEHAVIORAL_ASSESSMENT'                                                   // Avaliação de habilidades comportamentais
+    | 'PROJECT_CHALLENGE'                                                       // Desafio de projeto ou prático
+    | 'MANAGER_INTERVIEWS'                                                      // Entrevistas com líderes ou gestores
+    | 'REFERENCE_CHECK'                                                         // Verificação de referências
+    | 'JOB_OFFER'                                                               // Oferta de emprego
+    | 'PROCESS_COMPLETED'                                                       // Processo de contratação concluído
+    | 'CANCELLED'                                                               // Processo de contratação cancelado
+    | 'FROZEN';                                                                 // Processo de contratação congelado ou suspenso temporariamente
 
 export interface HiringProcess {
 
@@ -97,6 +103,20 @@ export interface HiringDeveloperSubscriber {
     updatedAt: string;
 }
 
+export interface DeveloperApplicationStatus {
+
+    id?: string;
+
+    processId: string
+
+    accountId: string
+    status: CandidateStatus
+    currentStep: HiringProcessSteps
+
+    createdAt: string;
+    updatedAt: string;
+}
+
 // ---------------------------------------------------------------------------------------------------------------------
 
 export type CreateNewProcessData = Omit<
@@ -133,6 +153,8 @@ export interface ApplyNewCandidate {
     candidate: Omit<HiringDeveloperSubscriber, 'createdAt' | 'updatedAt'>;
     processStepListId: ProcessStepsList['id'];
 }
+
+// ----------------------------------------------------------------------------------------------------------- job offer
 
 export interface JobOfferData {
 

@@ -80,12 +80,12 @@ async function createDeveloperAccount(name: string, email: string) {
 
 async function seedAccounts() {
 
-    const companyAccounts = 1;
-    const devAccounts = 35;
+    const companyAccounts = 5;
+    const devAccounts = 25;
     const devEmailPrefix = 'lucas';
     const companyEmailPrefix = 'lucas';
 
-    let __processId = ''
+    const hiring_list = [];
 
     for (let i = 1; i <= companyAccounts; i++) {
 
@@ -127,7 +127,7 @@ async function seedAccounts() {
 
         info(`Processo seletivo criado com sucesso: ${processId}`);
 
-        __processId = processId
+        hiring_list.push(processId);
     }
 
     for (let i = 1; i <= devAccounts; i++) {
@@ -138,19 +138,22 @@ async function seedAccounts() {
         info(`Conta do tipo [DEVELOPER] criada com sucesso - Email: ${email}`);
         info(`Conta criada: ${devAccountId} Perfil criado: ${devProfileId} `);
 
-        const { message } = await hiringService.applyToProcess({
-            processId: __processId,
-            candidate: {
-                name: `Lucas Oliveira ${i}`,
-                picture: 'https://www.svgrepo.com/show/527946/user-circle.svg',
-                profileId: devProfileId,
-                accountId: devAccountId,
-                email,
-            }
-        })
+        for (const process of hiring_list) {
 
-        warning(message);
+            const { message } = await hiringService.applyToProcess({
+                processId: process,
+                candidate: {
+                    email,
+                    accountId: devAccountId,
+                    profileId: devProfileId,
+                    name: `Lucas Oliveira ${i}`,
+                    picture: 'https://www.svgrepo.com/show/527946/user-circle.svg',
+                }
+            })
 
+            warning(message);
+
+        }
     };
 
 }

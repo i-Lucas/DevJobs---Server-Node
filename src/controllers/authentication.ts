@@ -9,7 +9,7 @@ async function signin(req: Request, res: Response) {
 	const data: { email: string; password: string } = req.body;
 	const token = await authService.signin(data);
 
-	// await new Promise((resolve) => setTimeout(resolve, 3200));
+	await new Promise((resolve) => setTimeout(resolve, 850));
 
 	const response: ApiResponse<{ token: string }> = {
 		status: 200,

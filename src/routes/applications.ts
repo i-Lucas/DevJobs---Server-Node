@@ -6,6 +6,7 @@ import developerHiringController from '../controllers/developer/hiring.js';
 
 const applicationsRouter = Router();
 
-applicationsRouter.get('/applications/get/all', tokenHandler, developerHiringController.getAllUserApplications);
+applicationsRouter.get('/applications/all', tokenHandler, developerHiringController.getAllUserApplications);
+applicationsRouter.get('/applications/get/:processId', tokenHandler, developerHiringController.getApplicationById);
 
 export default applicationsRouter;

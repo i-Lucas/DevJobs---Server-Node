@@ -3,7 +3,6 @@ import utils from '../../utils/appUtils.js';
 
 import {
     HiringProcess,
-    ApplyNewCandidate,
     HiringProcessSteps,
     HiringDeveloperSubscriber,
 
@@ -59,23 +58,8 @@ async function updateCandidateList(candidates: HiringDeveloperSubscriber[]) {
     }
 }
 
-async function applyNewCandidate({ processStepListId, candidate }: ApplyNewCandidate) {
-
-    const createdAtAndUpdatedAt = utils.createdAtAndUpdatedAtNow();
-
-    await db.hiringDeveloperSubscriber.create({
-
-        data: {
-
-            ...candidate,
-            processStepListId,
-            ...createdAtAndUpdatedAt,
-        }
-    })
-};
 
 const updateHiringProcessPackage = {
-    applyNewCandidate,
     updateCandidateList,
     updateSubscribersCount,
     updateProcessCurrentStep,

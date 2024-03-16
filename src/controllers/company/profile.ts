@@ -8,7 +8,7 @@ async function getCompanyProfile(req: Request, res: Response) {
 
     const { profileId } = req.params;
 
-    // await new Promise((resolve) => setTimeout(resolve, 3500));
+    await new Promise((resolve) => setTimeout(resolve, 850));
 
     const profile = await companyProfileService.getCompanyProfile(profileId);
 
@@ -25,7 +25,7 @@ async function updateCompanyProfile(req: Request, res: Response) {
 
     const { identifier, data, profileId } = req.body;
 
-    // await new Promise((resolve) => setTimeout(resolve, 3500));
+    await new Promise((resolve) => setTimeout(resolve, 850));
 
     const response = await companyProfileService.updateCompanyProfile({ data, identifier, profileId });
 

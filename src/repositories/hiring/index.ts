@@ -1,6 +1,7 @@
 import getHiringProcessPackage from './get.js';
 import createHiringProcessPackage from './create.js';
 import updateHiringProcessPackage from './update.js';
+import updateDeveloperProfilePackage from '../profile/developer/update.js';
 
 const hiringRepository = {
 
@@ -19,16 +20,15 @@ const hiringRepository = {
 
     update: {
 
-        apply: updateHiringProcessPackage.applyNewCandidate,
         subsCount: updateHiringProcessPackage.updateSubscribersCount,
-        
+
         steps: {
 
             currentStep: updateHiringProcessPackage.updateProcessCurrentStep,
 
             list: {
 
-                candidateList: updateHiringProcessPackage.updateCandidateList
+                candidateList: updateHiringProcessPackage.updateCandidateList,
             }
         }
     },

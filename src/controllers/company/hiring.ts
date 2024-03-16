@@ -10,7 +10,7 @@ async function changeHiringProcessStep(req: Request, res: Response) {
 
     const { processId, stepIdentifier } = req.body;
 
-    // await new Promise((resolve) => setTimeout(resolve, 700));
+    await new Promise((resolve) => setTimeout(resolve, 850));
 
     const response = await hiringService.updateProcessStep({
         processId,
@@ -25,7 +25,7 @@ async function startHiringProcess(req: Request, res: Response) {
 
     const user: UserJwtPayload = res.locals.user;
 
-    // await new Promise((resolve) => setTimeout(resolve, 3500));
+    await new Promise((resolve) => setTimeout(resolve, 850));
 
     const response = await hiringService.createProcess({
         data: req.body,
@@ -39,7 +39,7 @@ async function getCompanyHiringProcess(req: Request, res: Response) {
 
     const { profileId }: UserJwtPayload = res.locals.user;
 
-    // await new Promise((resolve) => setTimeout(resolve, 3600));
+    await new Promise((resolve) => setTimeout(resolve, 850));
 
     const response = await hiringService.getCompanyHiringProcessList(profileId);
 
@@ -52,6 +52,8 @@ async function getCompanyHiringProcessById(req: Request, res: Response) {
 
     const { processId } = req.params;
 
+    await new Promise((resolve) => setTimeout(resolve, 850));
+
     const response = await hiringService.getCompanyHiringProcessById(profileId, processId);
 
     return res.status(response.status).json(response);
@@ -63,7 +65,7 @@ async function updateHiringProcessStepList(req: Request, res: Response) {
 
     const { processId, candidatesLists } = req.body;
 
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 850));
 
     const response = await hiringService.updateCandidateList({ recruiterEmail, processId, candidatesLists });
 
@@ -71,6 +73,8 @@ async function updateHiringProcessStepList(req: Request, res: Response) {
 };
 
 async function createNewCandidateList(req: Request, res: Response) {
+
+    await new Promise((resolve) => setTimeout(resolve, 850));
 
     const response = await hiringService.createNewStepCandidateList(req.body);
 

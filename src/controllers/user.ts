@@ -6,7 +6,7 @@ async function checkEmailAvailability(req: Request, res: Response) {
 
 	const { email } = req.params;
 
-	// await new Promise((resolve) => setTimeout(resolve, 2900));
+	await new Promise((resolve) => setTimeout(resolve, 850));
 
 	const response = await userService.checkEmailAvailability(email);
 	

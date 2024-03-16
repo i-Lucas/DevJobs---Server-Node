@@ -5,11 +5,12 @@ import { apiErrors, appMessageErros } from '../../errors/index.js';
 import {
 
     HiringProcess,
+    CandidateStatus,
+    ProcessStepsList,
     HiringProcessSteps,
     HiringProcessStepLists,
     ProcessStepListIdentifier,
     HiringDeveloperSubscriber,
-    ProcessStepsList,
 
 } from '../../models/hiring.js';
 
@@ -17,8 +18,10 @@ import messageService from '../messages/messages.js';
 import messageBodyHTMLService from '../messages/html.js';
 import { MessageSeverity } from '../../models/messages.js';
 import hiringRepository from '../../repositories/hiring/index.js';
+import applicationsRepository from '../../repositories/applications/applications.js';
 
 interface HandleUpdateProcessStep {
+
     process: HiringProcess;
     newStepIdentifier: HiringProcessSteps;
     currentStepIdenfier: HiringProcessSteps;
@@ -26,10 +29,52 @@ interface HandleUpdateProcessStep {
 }
 
 interface SendMessageData {
+
     messageBody: string;
     process: HiringProcess;
     severity: MessageSeverity
     candidates: HiringDeveloperSubscriber[];
+}
+
+async function handleUpdateProcess({ process, currentStepIdenfier, newStepIdentifier, listIdentifiers }: HandleUpdateProcessStep): Promise<ProcessStepsList> {
+
+    const { candidatesLists: allLists } = await hiringRepository.get.steps.candidatesList(process.id, currentStepIdenfier);
+
+    const { allCandidates, allFavorites, notApprovedCandidates } = await extractCandidateLists(allLists, listIdentifiers);
+
+    if (allCandidates.length === 0 && allFavorites.length === 0) {
+        apiErrors.BadRequest(appMessageErros.hiring.noCandidates);
+    }
+
+    const newStep = await createNewStep(process, newStepIdentifier);
+
+    const newStepSubscribersList = await createCandidatesList(newStep.id);
+    await fillCandidateList(newStepSubscribersList.id, allCandidates);
+
+    const newStepFavoritesList = await createFavoritesCandidatesList(newStep.id);
+    await fillCandidateList(newStepFavoritesList.id, allFavorites);
+
+    await createNextStepQualifiedsCandidatesList(newStep.id);
+
+    const allApprovedCandidates: HiringDeveloperSubscriber[] = [...allCandidates, ...allFavorites];
+
+    await sendMessageToApprovedCandidates(process, allApprovedCandidates);
+    await sendMessageToNotApprovedCandidates(process, notApprovedCandidates);
+
+    await updateCandidateStatus(allApprovedCandidates, {
+        processId: process.id,
+        currentStep: newStep.identifier,
+        status: 'APPROVED_FOR_NEXT_STAGE',
+    });
+
+    await updateCandidateStatus(notApprovedCandidates, {
+        processId: process.id,
+        currentStep: newStep.identifier,
+        status: 'REPROVED',
+    });
+
+    const sendNewStep = await hiringRepository.get.steps.getStepById(newStep.id)
+    return sendNewStep;
 }
 
 async function extractCandidateLists(allLists: HiringProcessStepLists[], listIdentifiers: ProcessStepListIdentifier[]) {
@@ -77,6 +122,26 @@ async function createNewStep(process: HiringProcess, newStepIdentifier: HiringPr
     return newStep;
 };
 
+interface UpdateCandidateStatus {
+
+    processId: string;
+    status: CandidateStatus;
+    currentStep: HiringProcessSteps;
+}
+
+async function updateCandidateStatus(candidates: HiringDeveloperSubscriber[], data: UpdateCandidateStatus) {
+
+    const updatePromises = candidates.map(async (candidate) => {
+
+        await applicationsRepository.updateCandidateStauts({
+            ...data,
+            accountId: candidate.accountId
+        })
+    })
+
+    await Promise.all(updatePromises);
+}
+
 async function sendMessages({ candidates, severity, process, messageBody }: SendMessageData) {
 
     const messagePromises = candidates.map(async (candidate) => {
@@ -89,8 +154,9 @@ async function sendMessages({ candidates, severity, process, messageBody }: Send
             senderEmail: process.rhEmail,
             receiverEmail: candidate.email,
             receiverAccountId: candidate.accountId,
-            subject: `Atualização processo seletivo - Vaga ${process.title}`,
+            subject: `Atualização Processo Seletivo - Vaga ${process.title}`,
         });
+
     });
 
     await Promise.all(messagePromises);
@@ -98,8 +164,8 @@ async function sendMessages({ candidates, severity, process, messageBody }: Send
 
 async function fillCandidateList(candidateListId: string, candidates: HiringDeveloperSubscriber[]) {
 
-    if(candidates.length === 0) return;
-    
+    if (candidates.length === 0) return;
+
     const createdAtAndUpdatedAt = utils.createdAtAndUpdatedAtNow();
 
     const updatedCandidates = candidates.map(candidate => ({
@@ -111,53 +177,8 @@ async function fillCandidateList(candidateListId: string, candidates: HiringDeve
     await hiringRepository.create.steps.fillCandidatesList(updatedCandidates);
 };
 
-async function handleUpdateProcess({ process, currentStepIdenfier, newStepIdentifier, listIdentifiers }: HandleUpdateProcessStep): Promise<ProcessStepsList> {
-
-    const { candidatesLists: allLists } = await hiringRepository.get.steps.candidatesList(process.id, currentStepIdenfier);
-
-    const { allCandidates, allFavorites, notApprovedCandidates } = await extractCandidateLists(allLists, listIdentifiers);
-
-    if (allCandidates.length === 0 && allFavorites.length === 0) {
-        apiErrors.BadRequest(appMessageErros.hiring.noCandidates);
-    }
-
-    const newStep = await createNewStep(process, newStepIdentifier);
-
-    const newStepSubscribersList = await createCandidatesList(newStep.id);
-
-    await fillCandidateList(newStepSubscribersList.id, allCandidates);
-
-    const newStepFavoritesList = await createFavoritesCandidatesList(newStep.id);
-   
-    await fillCandidateList(newStepFavoritesList.id, allFavorites);
-
-    await createNextStepQualifiedsCandidatesList(newStep.id);
-
-    const allApprovedCandidates: HiringDeveloperSubscriber[] = [...allCandidates, ...allFavorites];
-
-    // messageBodyHTMLService  ...
-    const approvedMessageBodyHTML = `Você foi aprovado para a próxima etapa do processo ${process.title} !`
-    const reprovedMessageBodyHTML = `Infelizmente você não foi aprovado para a vaga ${process.title} !`
-
-    await sendMessages({
-        process,
-        severity: 'SUCCESS',
-        candidates: allApprovedCandidates,
-        messageBody: approvedMessageBodyHTML,
-    });
-
-    await sendMessages({
-        process,
-        severity: 'INFO',
-        candidates: notApprovedCandidates,
-        messageBody: reprovedMessageBodyHTML,
-    });
-
-    const sendNewStep = await hiringRepository.get.steps.getStepById(newStep.id)
-    return sendNewStep;
-}
-
 async function createFavoritesCandidatesList(processStepId: string) {
+
     return await hiringRepository.create.steps.stepList({
         processStepId,
         name: 'Favoritos',
@@ -167,6 +188,7 @@ async function createFavoritesCandidatesList(processStepId: string) {
 }
 
 async function createNextStepQualifiedsCandidatesList(processStepId: string) {
+
     await hiringRepository.create.steps.stepList({
         processStepId,
         name: 'Qualificados',
@@ -176,6 +198,7 @@ async function createNextStepQualifiedsCandidatesList(processStepId: string) {
 };
 
 async function createCandidatesList(processStepId: string) {
+
     return await hiringRepository.create.steps.stepList({
         processStepId,
         name: 'Candidatos',
@@ -184,8 +207,35 @@ async function createCandidatesList(processStepId: string) {
     });
 }
 
+async function sendMessageToApprovedCandidates(process: HiringProcess, candidateList: HiringDeveloperSubscriber[]) {
+
+    // messageBodyHTMLService  ...
+    const approvedMessageBodyHTML = `Você foi aprovado para a próxima etapa do processo ${process.title} !`
+
+    await sendMessages({
+        process,
+        severity: 'SUCCESS',
+        candidates: candidateList,
+        messageBody: approvedMessageBodyHTML,
+        // candidateStatus: 'APPROVED_FOR_NEXT_STAGE'
+    })
+}
+
+async function sendMessageToNotApprovedCandidates(process: HiringProcess, candidateList: HiringDeveloperSubscriber[]) {
+
+    const reprovedMessageBodyHTML = `Infelizmente você não foi aprovado para a vaga ${process.title} !`
+
+    await sendMessages({
+        process,
+        severity: 'INFO',
+        candidates: candidateList,
+        messageBody: reprovedMessageBodyHTML,
+        // candidateStatus: 'REPROVED'
+    })
+}
+
 const hiringStepsPackage = {
     handleUpdateProcess
 }
 
-export default hiringStepsPackage
+export default hiringStepsPackage;

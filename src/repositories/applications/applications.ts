@@ -1,57 +1,175 @@
-import db from '../../config/db.js'
+import db from '../../config/db.js';
+import utils from '../../utils/appUtils.js';
 
-import utils from "../../utils/appUtils.js";
+import {
 
-async function getAllUserApplications(accountId: string) {
+    CandidateStatus,
+    HiringProcessSteps,
+    ApplyNewCandidate
 
-    const userProcesses = await db.processStepList.findMany({
+} from '../../models/hiring.js'
+
+import {
+    GetUserApplicationsResponse
+} from '../../models/applications.js';
+
+interface UpdateCandidateStatus {
+
+    processId: string
+    accountId: string
+
+    status: CandidateStatus
+    currentStep: HiringProcessSteps
+}
+
+async function getApplicationById(accountId: string, processId: string): Promise<GetUserApplicationsResponse[]> {
+
+    const history = await db.developerApplicationStatus.findMany({
+
         where: {
-            candidates: {
-                some: {
-                    accountId
+            accountId,
+            processId
+        },
+        include: {
+            hiringProcess: {
+                select: {
+                    id: true,
+                    title: true,
+                    category: true,
+                    seniority: true,
+                    company: {
+                        select: {
+                            CompanyProfileDetailsModel: {
+                                select: {
+                                    fantasy_name: true
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
-        select: {
-            id: true,
-            processStep: {
+        orderBy: {
+            createdAt: 'desc'
+        }
+    })
+
+    const result: GetUserApplicationsResponse[] = [];
+
+    history.forEach(application => {
+
+        const applicationHistory: GetUserApplicationsResponse = {
+            status: application.status,
+            processId: application.processId,
+            createdAt: application.createdAt,
+            updatedAt: application.updatedAt,
+            currentStep: application.currentStep,
+            title: application.hiringProcess.title,
+            category: application.hiringProcess.category,
+            seniority: application.hiringProcess.seniority,
+            company: application.hiringProcess.company.CompanyProfileDetailsModel.fantasy_name,
+        }
+
+        result.push(applicationHistory);
+    })
+
+    return result;
+}
+
+async function getAllUserApplications(accountId: string) {
+
+    const applications = await db.developerApplicationStatus.findMany({
+
+        where: {
+            accountId
+        },
+        include: {
+            hiringProcess: {
                 select: {
-                    hiringProcess: {
+                    id: true,
+                    title: true,
+                    category: true,
+                    seniority: true,
+                    company: {
                         select: {
-                            id: true,
-                            title: true,                            
-                            currentStep: true
+                            CompanyProfileDetailsModel: {
+                                select: {
+                                    fantasy_name: true
+                                }
+                            }
                         }
-                    },
-                    identifier: true,
-                    createdAt: true
-                },
-            },
+                    }
+                }
+            }
         },
         orderBy: {
-            createdAt: 'desc',
-        },
+            createdAt: 'desc'
+        }
     });
 
-    // obter apenas o primeiro registro de cada processo ( etapa atual )
-    // cada processo pode ter vários registros do mesmo usuário ( um por etapa )
-    const uniqueUserProcesses = userProcesses.filter((process, index, self) => {
-        const currentIndex = self.findIndex(item => item.processStep.hiringProcess.id === process.processStep.hiringProcess.id);
-        return currentIndex === index;
-    });
+    const userApplications: GetUserApplicationsResponse[] = [];
+    const processedIds = new Set<string>();
 
-    const userApplications = uniqueUserProcesses.map(process => ({
-        processId: process.processStep.hiringProcess.id,
-        title: process.processStep.hiringProcess.title,
-        currentStep: process.processStep.identifier,
-        stepListId: process.id
-    }));
+    applications.forEach(application => {
+
+        if (processedIds.has(application.processId)) return
+
+        const userApplication: GetUserApplicationsResponse = {
+            status: application.status,
+            processId: application.processId,
+            createdAt: application.createdAt,
+            updatedAt: application.updatedAt,
+            currentStep: application.currentStep,
+            title: application.hiringProcess.title,
+            category: application.hiringProcess.category,
+            seniority: application.hiringProcess.seniority,
+            company: application.hiringProcess.company.CompanyProfileDetailsModel.fantasy_name,
+        };
+
+        userApplications.push(userApplication);
+        processedIds.add(application.processId);
+    });
 
     return userApplications;
+}
+
+async function applyInProcess({ processStepListId, candidate }: ApplyNewCandidate) {
+
+    const createdAtAndUpdatedAt = utils.createdAtAndUpdatedAtNow();
+
+    await db.hiringDeveloperSubscriber.create({
+
+        data: {
+
+            ...candidate,
+            processStepListId,
+            ...createdAtAndUpdatedAt,
+        }
+    });
 };
 
+async function updateCandidateStauts(data: UpdateCandidateStatus) {
+
+    const createdAtAndUpdatedAt = utils.createdAtAndUpdatedAtNow();
+
+    await db.developerApplicationStatus.create({
+
+        data: {
+
+            status: data.status,
+            processId: data.processId,
+            accountId: data.accountId,
+            currentStep: data.currentStep,
+            ...createdAtAndUpdatedAt,
+        }
+    })
+}
+
 const applicationsRepository = {
-    getAllUserApplications
+    applyInProcess,
+    getApplicationById,
+    getAllUserApplications,
+    updateCandidateStauts,
 };
 
 export default applicationsRepository;

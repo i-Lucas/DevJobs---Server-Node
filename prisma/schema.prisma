@@ -365,8 +365,10 @@ model HiringProcess {
   rhEmail          String
   subscribersCount Int
 
-  steps       ProcessStep[]
   currentStep HiringProcessSteps
+
+  steps                      ProcessStep[]
+  DeveloperApplicationStatus DeveloperApplicationStatus[]
 
   createdAt String
   updatedAt String
@@ -415,6 +417,30 @@ model HiringDeveloperSubscriber {
 
   ProcessStepList   ProcessStepList? @relation(fields: [processStepListId], references: [id])
   processStepListId String?
+
+  createdAt String
+  updatedAt String
+}
+
+enum CandidateStatus {
+  REGISTERED // Inscrito
+  REPROVED // Reprovado
+  APPROVED_FOR_NEXT_STAGE // Aprovado para próxima etapa
+  APPROVED // Aprovado
+  JOB_FROZEN // Aguardando
+  JOB_CANCELED // Encerrado
+}
+
+model DeveloperApplicationStatus {
+  // 
+  id String @id @default(uuid())
+
+  hiringProcess HiringProcess? @relation(fields: [processId], references: [id])
+  processId     String?
+
+  accountId   String
+  status      CandidateStatus
+  currentStep HiringProcessSteps
 
   createdAt String
   updatedAt String

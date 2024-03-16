@@ -7,7 +7,7 @@ async function restoreMessage(req: Request, res: Response) {
 
     const { messageId } = req.params;
 
-    // await new Promise((resolve) => setTimeout(resolve, 2500));
+    await new Promise((resolve) => setTimeout(resolve, 850));
 
     const response = await messageService.restoreMessage(messageId);
 
@@ -18,7 +18,7 @@ async function favoriteMessage(req: Request, res: Response) {
 
     const { messageId } = req.params;
 
-    // await new Promise((resolve) => setTimeout(resolve, 2500));
+    await new Promise((resolve) => setTimeout(resolve, 850));
 
     const response = await messageService.favoriteMessage(messageId);
 
@@ -29,7 +29,7 @@ async function unfavoriteMessage(req: Request, res: Response) {
 
     const { messageId } = req.params;
 
-    // await new Promise((resolve) => setTimeout(resolve, 2500));
+    await new Promise((resolve) => setTimeout(resolve, 850));
 
     const response = await messageService.unfavoriteMessage(messageId);
 
@@ -40,7 +40,7 @@ async function deleteMessage(req: Request, res: Response) {
 
     const { messageId } = req.params;
 
-    // await new Promise((resolve) => setTimeout(resolve, 2500));
+    await new Promise((resolve) => setTimeout(resolve, 850));
 
     const response = await messageService.deleteMessage(messageId);
 
@@ -51,7 +51,7 @@ async function markAsRead(req: Request, res: Response) {
 
     const { messageId } = req.params;
 
-    // await new Promise((resolve) => setTimeout(resolve, 2500));
+    await new Promise((resolve) => setTimeout(resolve, 850));
 
     const response = await messageService.markAsRead(messageId);
 
@@ -60,7 +60,7 @@ async function markAsRead(req: Request, res: Response) {
 
 async function getAllMessages(req: Request, res: Response) {
 
-    // await new Promise((resolve) => setTimeout(resolve, 2500));
+    await new Promise((resolve) => setTimeout(resolve, 850));
 
     const { accountId }: UserJwtPayload = res.locals.user;
 
