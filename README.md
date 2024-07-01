@@ -57,9 +57,6 @@ Para executar os testes, utilize o comando:
 npm run test
 ````
 
-Contribuições
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests.
-
 Licença
 Este projeto está licenciado sob a licença MIT. Consulte o arquivo LICENSE para obter mais informações.
 
