@@ -23,6 +23,7 @@ Este projeto visa fornecer uma solução eficiente e prática para gerenciar pro
 ## Como Clonar o Projeto
 Para clonar o projeto, siga as instruções abaixo:
 
+Node version required: v16.20.2
 
 ```bash
 git clone git@github.com:i-Lucas/DevJobs---Server-Node.git
